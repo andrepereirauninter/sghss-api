@@ -12,9 +12,9 @@ export class Administrator extends BaseEntity<Administrator> {
   active: boolean;
 
   @RelationId((administrator: Administrator) => administrator.user)
-  userId: string;
+  userId?: string;
 
   @OneToOne(() => User)
   @JoinColumn({ name: 'usuario_id' })
-  user: User;
+  user?: User;
 }

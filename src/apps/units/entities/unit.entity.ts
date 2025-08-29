@@ -1,7 +1,7 @@
 import { Column, Entity, JoinTable, ManyToMany } from 'typeorm';
 
 import { BaseEntity } from '../../../common/entities/base.entity';
-import { HealthProfessional } from '../../users/entities/health-professional.entity';
+import { Professional } from '../../users/entities/professional.entity';
 import { UnitType } from '../../users/enums/unit-type.enum';
 
 @Entity('unidades')
@@ -21,11 +21,11 @@ export class Unit extends BaseEntity<Unit> {
   @Column({ name: 'ativo' })
   active: boolean;
 
-  @ManyToMany(() => HealthProfessional)
+  @ManyToMany(() => Professional)
   @JoinTable({
-    name: 'unidades_profissionais_de_saude',
+    name: 'unidades_profissionais',
     joinColumn: { name: 'unidade_id' },
-    inverseJoinColumn: { name: 'profissional_de_saude_id' },
+    inverseJoinColumn: { name: 'profissional_id' },
   })
-  healthProfessionals: HealthProfessional[];
+  professionals: Professional[];
 }

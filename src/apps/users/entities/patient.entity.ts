@@ -21,9 +21,9 @@ export class Patient extends BaseEntity<Patient> {
   active: boolean;
 
   @RelationId((patient: Patient) => patient.user)
-  userId: string;
+  userId?: string;
 
   @OneToOne(() => User)
   @JoinColumn({ name: 'usuario_id' })
-  user: User;
+  user?: User;
 }
