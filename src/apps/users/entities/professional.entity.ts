@@ -12,7 +12,7 @@ export class Professional extends BaseEntity<Professional> {
   @Column({ name: 'especialidade' })
   speciality: string;
 
-  @Column({ name: 'tipo' })
+  @Column({ name: 'tipo', type: 'enum', enum: ProfessionalType })
   type: ProfessionalType;
 
   @Column({ name: 'ativo' })

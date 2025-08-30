@@ -9,7 +9,7 @@ export class Bed extends BaseEntity<Bed> {
   @Column({ name: 'numero' })
   number: string;
 
-  @Column()
+  @Column({ name: 'status', type: 'enum', enum: BedStatus })
   status: BedStatus;
 
   @Column({ name: 'unidade_id' })

@@ -15,7 +15,7 @@ export class Unit extends BaseEntity<Unit> {
   @Column({ name: 'endereco' })
   address: string;
 
-  @Column({ name: 'tipo' })
+  @Column({ name: 'tipo', type: 'enum', enum: UnitType })
   type: UnitType;
 
   @Column({ name: 'ativo' })

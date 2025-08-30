@@ -1,8 +1,11 @@
 import bcrypt from 'bcryptjs';
-import { BeforeInsert, BeforeUpdate, Column, Entity } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToOne } from 'typeorm';
 
 import { BaseEntity } from '../../../common/entities/base.entity';
 import { UserRole } from '../enums/user-role.enum';
+import { Administrator } from './administrator.entity';
+import { Patient } from './patient.entity';
+import { Professional } from './professional.entity';
 
 @Entity('usuarios')
 export class User extends BaseEntity<User> {
@@ -15,8 +18,17 @@ export class User extends BaseEntity<User> {
   @Column({ name: 'ativo' })
   active: boolean;
 
-  @Column({ name: 'perfil' })
+  @Column({ name: 'perfil', type: 'enum', enum: UserRole })
   role: UserRole;
+
+  @OneToOne(() => Administrator, (administrator) => administrator.user)
+  administrator: Administrator;
+
+  @OneToOne(() => Professional, (professional) => professional.user)
+  professional: Professional;
+
+  @OneToOne(() => Patient, (patient) => patient.user)
+  patient: Patient;
 
   @BeforeInsert()
   hashPassword(): void {

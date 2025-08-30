@@ -45,21 +45,21 @@ export class UserService {
       switch (payload.role) {
         case UserRole.ADMIN:
           await this.administratorService.create(
-            payload.administrator,
+            payload.administrator!,
             savedUser.id,
             queryRunner,
           );
           break;
         case UserRole.PROFESSIONAL:
           await this.professionalService.create(
-            payload.professional,
+            payload.professional!,
             savedUser.id,
             queryRunner,
           );
           break;
         case UserRole.PATIENT:
           await this.patientService.create(
-            payload.patient,
+            payload.patient!,
             savedUser.id,
             queryRunner,
           );

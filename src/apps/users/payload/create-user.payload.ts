@@ -42,19 +42,19 @@ export class CreateUserPayload {
   @Type(() => CreateAdministratorPayload)
   @ValidateIf((payload) => payload.role === UserRole.ADMIN)
   @IsNotEmpty()
-  administrator: CreateAdministratorPayload;
+  administrator?: CreateAdministratorPayload;
 
   @ApiPropertyOptional()
   @ValidateNested()
   @Type(() => CreateProfessionalPayload)
   @ValidateIf((payload) => payload.role === UserRole.PROFESSIONAL)
   @IsNotEmpty()
-  professional: CreateProfessionalPayload;
+  professional?: CreateProfessionalPayload;
 
   @ApiPropertyOptional()
   @ValidateNested()
   @Type(() => CreatePatientPayload)
   @ValidateIf((payload) => payload.role === UserRole.PATIENT)
   @IsNotEmpty()
-  patient: CreatePatientPayload;
+  patient?: CreatePatientPayload;
 }

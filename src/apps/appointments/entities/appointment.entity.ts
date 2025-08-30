@@ -12,10 +12,10 @@ export class Appointment extends BaseEntity<Appointment> {
   @Column({ name: 'data_hora', type: 'timestamp with time zone' })
   date: Date;
 
-  @Column()
+  @Column({ name: 'status', type: 'enum', enum: AppointmentStatus })
   status: AppointmentStatus;
 
-  @Column({ name: 'tipo' })
+  @Column({ name: 'tipo', type: 'enum', enum: AppointmentType })
   type: AppointmentType;
 
   @Column({ name: 'observacoes', type: 'text' })
