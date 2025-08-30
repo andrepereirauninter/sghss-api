@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, RelationId } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
 import { BaseEntity } from '../../../common/entities/base.entity';
 import { BedStatus } from '../enums/bed-status.enum';
@@ -12,7 +12,7 @@ export class Bed extends BaseEntity<Bed> {
   @Column()
   status: BedStatus;
 
-  @RelationId((bed: Bed) => bed.unit)
+  @Column({ name: 'unidade_id' })
   unitId: string;
 
   @ManyToOne(() => Unit)

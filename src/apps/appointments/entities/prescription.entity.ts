@@ -1,4 +1,4 @@
-import { Column, Entity, OneToOne, RelationId } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 
 import { BaseEntity } from '../../../common/entities/base.entity';
 import { Patient } from '../../users/entities/patient.entity';
@@ -10,21 +10,24 @@ export class Prescription extends BaseEntity<Prescription> {
   @Column({ name: 'instrucoes', type: 'text' })
   instructions: string;
 
-  @RelationId((prescription: Prescription) => prescription.appointment)
+  @Column({ name: 'agendamento_id' })
   appointmentId?: string;
 
   @OneToOne(() => Appointment)
+  @JoinColumn({ name: 'agendamento_id' })
   appointment?: Appointment;
 
-  @RelationId((prescription: Prescription) => prescription.patient)
+  @Column({ name: 'paciente_id' })
   patientId?: string;
 
   @OneToOne(() => Patient)
+  @JoinColumn({ name: 'paciente_id' })
   patient?: Patient;
 
-  @RelationId((prescription: Prescription) => prescription.professional)
+  @Column({ name: 'profissional_id' })
   professionalId?: string;
 
   @OneToOne(() => Professional)
+  @JoinColumn({ name: 'profissional_id' })
   professional?: Professional;
 }

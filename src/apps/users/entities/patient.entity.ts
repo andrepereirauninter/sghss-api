@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, OneToOne, RelationId } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 
 import { BaseEntity } from '../../../common/entities/base.entity';
 import { User } from './user.entity';
@@ -20,7 +20,7 @@ export class Patient extends BaseEntity<Patient> {
   @Column({ name: 'ativo' })
   active: boolean;
 
-  @RelationId((patient: Patient) => patient.user)
+  @Column({ name: 'usuario_id' })
   userId?: string;
 
   @OneToOne(() => User)

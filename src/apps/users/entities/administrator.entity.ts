@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, OneToOne, RelationId } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 
 import { BaseEntity } from '../../../common/entities/base.entity';
 import { User } from './user.entity';
@@ -11,7 +11,7 @@ export class Administrator extends BaseEntity<Administrator> {
   @Column({ name: 'ativo' })
   active: boolean;
 
-  @RelationId((administrator: Administrator) => administrator.user)
+  @Column({ name: 'usuario_id' })
   userId?: string;
 
   @OneToOne(() => User)
