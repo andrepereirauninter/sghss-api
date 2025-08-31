@@ -208,13 +208,13 @@ export class UserService {
 
       if (userExists) {
         throw new ConflictException(
-          `Um usuário com o email ${payload.email} já existe.`,
+          `O profissional de saúde com o email ${payload.email} já existe.`,
         );
       }
     }
 
     const professionalToUpdate = {
-      ...currentProfessional.patient,
+      ...currentProfessional.professional,
       name: payload.name,
       speciality: payload.speciality,
       type: payload.type,

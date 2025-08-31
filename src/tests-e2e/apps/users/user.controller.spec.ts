@@ -756,19 +756,271 @@ describe('UserController (e2e)', () => {
   });
 
   describe('/users/:id (PUT)', () => {
-    it('should update an administrator', async () => {});
+    it('should update an administrator', async () => {
+      const { user: administrator } = await createAdministratorMock({
+        app,
+        email: 'admin@email.com',
+        name: 'any_name',
+      });
 
-    it('should update a professional', async () => {});
+      const payload: UpdateAdministratorPayload = {
+        email: 'updated_admin@email.com',
+        name: 'updated_name',
+      };
 
-    it('should update a patient', async () => {});
+      const response = await request(app.getHttpServer())
+        .put(`/users/administrator/${administrator.id}`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
+        .send(payload);
 
-    it('should not update an administrator with a duplicate email', async () => {});
+      expect(response.status).toBe(HttpStatus.NO_CONTENT);
 
-    it('should not update a professional with a duplicate email', async () => {});
+      const responseInDb = await repository.findOne({
+        where: {
+          id: administrator.id,
+        },
+        relations: {
+          administrator: true,
+        },
+      });
 
-    it('should not update a patient with a duplicate email', async () => {});
+      expect(responseInDb).toMatchObject({
+        id: administrator.id,
+        email: payload.email,
+        active: administrator.active,
+        role: administrator.role,
+        administrator: {
+          id: administrator.administrator.id,
+          name: payload.name,
+        },
+      });
+    });
 
-    it('should not update a patient with a duplicate cpf', async () => {});
+    it('should update a professional', async () => {
+      const { user: professional } = await createProfessionalMock({
+        app,
+        email: 'professional@email.com',
+        name: 'any_name',
+      });
+
+      const payload: UpdateProfissionalPayload = {
+        email: 'updated_professional@email.com',
+        name: 'updated_name',
+        type: ProfessionalType.NURSE,
+        speciality: 'updated_speciality',
+      };
+
+      const response = await request(app.getHttpServer())
+        .put(`/users/professional/${professional.id}`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
+        .send(payload);
+
+      expect(response.status).toBe(HttpStatus.NO_CONTENT);
+
+      const responseInDb = await repository.findOne({
+        where: {
+          id: professional.id,
+        },
+        relations: {
+          professional: true,
+        },
+      });
+
+      expect(responseInDb).toMatchObject({
+        id: professional.id,
+        email: payload.email,
+        active: professional.active,
+        role: professional.role,
+        professional: {
+          id: professional.professional.id,
+          name: payload.name,
+          speciality: payload.speciality,
+          type: payload.type,
+        },
+      });
+    });
+
+    it('should update a patient', async () => {
+      const { user: patient } = await createPatientMock({
+        app,
+        email: 'patient@email.com',
+        name: 'any_name',
+        cpf: 'any_cpf',
+      });
+
+      const payload: UpdatePatientPayload = {
+        email: 'updated_patient@email.com',
+        name: 'updated_name',
+        cpf: 'updated_cpf',
+        birthDate: '2025-01-01',
+        contact: 'updated_contact',
+      };
+
+      const response = await request(app.getHttpServer())
+        .put(`/users/patient/${patient.id}`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
+        .send(payload);
+
+      expect(response.status).toBe(HttpStatus.NO_CONTENT);
+
+      const responseInDb = await repository.findOne({
+        where: {
+          id: patient.id,
+        },
+        relations: {
+          patient: true,
+        },
+      });
+
+      expect(responseInDb).toMatchObject({
+        id: patient.id,
+        email: payload.email,
+        active: patient.active,
+        role: patient.role,
+        patient: {
+          id: patient.patient.id,
+          name: payload.name,
+          cpf: payload.cpf,
+          birthDate: payload.birthDate,
+        },
+      });
+    });
+
+    it('should not update an administrator with a duplicate email', async () => {
+      const { user: existingProfessional } = await createAdministratorMock({
+        app,
+        email: 'existing_admin@email.com',
+        name: 'any_name',
+      });
+
+      const { user: administratorToUpdate } = await createAdministratorMock({
+        app,
+        email: 'admin_to_update@email.com',
+        name: 'any_name',
+      });
+
+      const payload: UpdateAdministratorPayload = {
+        email: existingProfessional.email,
+        name: 'updated_name',
+      };
+
+      const response = await request(app.getHttpServer())
+        .put(`/users/administrator/${administratorToUpdate.id}`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
+        .send(payload);
+
+      expect(response.status).toBe(HttpStatus.CONFLICT);
+      expect(response.body).toEqual({
+        error: 'Conflict',
+        statusCode: HttpStatus.CONFLICT,
+        message: `Um usuário com o email ${payload.email} já existe.`,
+      });
+    });
+
+    it('should not update a professional with a duplicate email', async () => {
+      const { user: existingProfessional } = await createProfessionalMock({
+        app,
+        email: 'existing_professional@email.com',
+        name: 'existing_name',
+      });
+
+      const { user: professionalToUpdate } = await createProfessionalMock({
+        app,
+        email: 'professional_to_update@email.com',
+        name: 'any_name',
+      });
+
+      const payload: UpdateProfissionalPayload = {
+        email: existingProfessional.email,
+        name: 'updated_name',
+        type: ProfessionalType.NURSE,
+        speciality: 'updated_speciality',
+      };
+
+      const response = await request(app.getHttpServer())
+        .put(`/users/professional/${professionalToUpdate.id}`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
+        .send(payload);
+
+      expect(response.status).toBe(HttpStatus.CONFLICT);
+      expect(response.body).toEqual({
+        error: 'Conflict',
+        statusCode: HttpStatus.CONFLICT,
+        message: `O profissional de saúde com o email ${payload.email} já existe.`,
+      });
+    });
+
+    it('should not update a patient with a duplicate email', async () => {
+      const { user: existingPatient } = await createPatientMock({
+        app,
+        email: 'existing_patient@email.com',
+        name: 'any_name',
+        cpf: 'existing_cpf',
+      });
+
+      const { user: patientToUpdate } = await createPatientMock({
+        app,
+        email: 'patient_to_update@email.com',
+        name: 'any_name',
+        cpf: 'any_cpf',
+      });
+
+      const payload: UpdatePatientPayload = {
+        email: existingPatient.email,
+        name: 'updated_name',
+        cpf: 'updated_cpf',
+        birthDate: '2025-01-01',
+        contact: 'updated_contact',
+      };
+
+      const response = await request(app.getHttpServer())
+        .put(`/users/patient/${patientToUpdate.id}`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
+        .send(payload);
+
+      expect(response.status).toBe(HttpStatus.CONFLICT);
+      expect(response.body).toEqual({
+        error: 'Conflict',
+        statusCode: HttpStatus.CONFLICT,
+        message: `O paciente com o email ${payload.email} já existe.`,
+      });
+    });
+
+    it('should not update a patient with a duplicate cpf', async () => {
+      const { user: existingPatient } = await createPatientMock({
+        app,
+        email: 'existing_patient@email.com',
+        name: 'any_name',
+        cpf: 'existing_cpf',
+      });
+
+      const { user: patientToUpdate } = await createPatientMock({
+        app,
+        email: 'patient_to_update@email.com',
+        name: 'any_name',
+        cpf: 'any_cpf',
+      });
+
+      const payload: UpdatePatientPayload = {
+        email: 'updated_email@email.com',
+        name: 'updated_name',
+        cpf: existingPatient.patient.cpf,
+        birthDate: '2025-01-01',
+        contact: 'updated_contact',
+      };
+
+      const response = await request(app.getHttpServer())
+        .put(`/users/patient/${patientToUpdate.id}`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
+        .send(payload);
+
+      expect(response.status).toBe(HttpStatus.CONFLICT);
+      expect(response.body).toEqual({
+        error: 'Conflict',
+        statusCode: HttpStatus.CONFLICT,
+        message: `O paciente com o cpf ${payload.cpf} já existe.`,
+      });
+    });
 
     it('should not update a administrator if it does not exist', async () => {
       const id = randomUUID();
