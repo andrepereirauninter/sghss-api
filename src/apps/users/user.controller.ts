@@ -1,8 +1,9 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
   ApiForbiddenResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -10,6 +11,7 @@ import {
 } from '@nestjs/swagger';
 
 import { apiResponses } from '../../common/constants/swagger';
+import { UUIDValidationPipe } from '../../common/pipes/uuid-validation.pipe';
 import { JwtAuth } from '../auth/decorators/jwt-auth.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from './enums/user-role.enum';
@@ -64,5 +66,30 @@ export class UserController {
   @Roles(UserRole.ADMIN)
   create(@Body() payload: CreateUserPayload) {
     return this.service.create(payload);
+  }
+
+  @Get(':id')
+  @ApiOperation({
+    summary: 'Obter detalhes de um usuário',
+  })
+  @ApiCreatedResponse({
+    description: 'Detalhes de um usuário obtidos com sucesso.',
+  })
+  @ApiBadRequestResponse({
+    description: apiResponses.badRequestWithValidation,
+  })
+  @ApiUnauthorizedResponse({
+    description: apiResponses.unauthorizedDefaultMessage,
+  })
+  @ApiForbiddenResponse({
+    description: apiResponses.forbiddenDefaultMessage,
+  })
+  @ApiNotFoundResponse({
+    description: 'Usuário não encontrado.',
+  })
+  @JwtAuth()
+  @Roles(UserRole.ADMIN)
+  getDetails(@Param('id', UUIDValidationPipe) id: string) {
+    return this.service.getDetails(id);
   }
 }

@@ -1,6 +1,7 @@
 import {
   ConflictException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 
@@ -17,6 +18,10 @@ export class UserService {
     private readonly repository: UserRepository,
     private readonly patientService: PatientService,
   ) {}
+
+  findAll(payload: FilterAllUsersPayload) {
+    return this.repository.findAll(payload);
+  }
 
   async create(payload: CreateUserPayload) {
     const userExists = await this.repository.findOneBy({
@@ -76,7 +81,13 @@ export class UserService {
     }
   }
 
-  findAll(payload: FilterAllUsersPayload) {
-    return this.repository.findAll(payload);
+  async getDetails(id: string) {
+    const user = await this.repository.findDetails(id);
+
+    if (!user) {
+      throw new NotFoundException(`Usuário com ID ${id} não foi encontrado.`);
+    }
+
+    return user;
   }
 }

@@ -526,4 +526,84 @@ describe('UserController (e2e)', () => {
       });
     });
   });
+
+  describe('/users/:id (GET)', () => {
+    it('should get details of an administrator', async () => {
+      const { user: administrator } = await createAdministratorMock({
+        app,
+        email: 'admin@email.com',
+      });
+
+      const response = await request(app.getHttpServer())
+        .get(`/users/${administrator.id}`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
+        .send();
+
+      expect(response.status).toBe(HttpStatus.OK);
+      expect(response.body).toMatchObject({
+        id: administrator.id,
+        email: administrator.email,
+        active: administrator.active,
+        role: administrator.role,
+        administrator: {
+          id: administrator.administrator.id,
+          name: administrator.administrator.name,
+        },
+      });
+    });
+
+    it('should get details of a professional', async () => {
+      const { user: professional } = await createProfessionalMock({
+        app,
+        email: 'professional@email.com',
+      });
+
+      const response = await request(app.getHttpServer())
+        .get(`/users/${professional.id}`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
+        .send();
+
+      expect(response.status).toBe(HttpStatus.OK);
+      expect(response.body).toMatchObject({
+        id: professional.id,
+        email: professional.email,
+        active: professional.active,
+        role: professional.role,
+        professional: {
+          id: professional.professional.id,
+          name: professional.professional.name,
+          speciality: professional.professional.speciality,
+          type: professional.professional.type,
+        },
+      });
+    });
+
+    it('should get details of a patient', async () => {
+      const { user: patient } = await createPatientMock({
+        app,
+        email: 'patient@email.com',
+        cpf: 'any_cpf',
+      });
+
+      const response = await request(app.getHttpServer())
+        .get(`/users/${patient.id}`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
+        .send();
+
+      expect(response.status).toBe(HttpStatus.OK);
+      expect(response.body).toMatchObject({
+        id: patient.id,
+        email: patient.email,
+        active: patient.active,
+        role: patient.role,
+        patient: {
+          id: patient.patient.id,
+          name: patient.patient.name,
+          cpf: patient.patient.cpf,
+          birthDate: patient.patient.birthDate,
+          contact: patient.patient.contact,
+        },
+      });
+    });
+  });
 });

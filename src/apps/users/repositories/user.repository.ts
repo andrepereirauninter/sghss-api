@@ -91,4 +91,31 @@ export class UserRepository extends BaseRepository<User> {
 
     return paginate(query, page, limit);
   }
+
+  findDetails(id: string) {
+    return this.createQueryBuilder('user')
+      .leftJoin('user.administrator', 'administrator')
+      .leftJoin('user.professional', 'professional')
+      .leftJoin('user.patient', 'patient')
+      .where('user.id = :id', { id })
+      .select([
+        'user.id',
+        'user.createdAt',
+        'user.email',
+        'user.active',
+        'user.role',
+        'administrator.id',
+        'administrator.name',
+        'professional.id',
+        'professional.name',
+        'professional.speciality',
+        'professional.type',
+        'patient.id',
+        'patient.cpf',
+        'patient.name',
+        'patient.birthDate',
+        'patient.contact',
+      ])
+      .getOne();
+  }
 }
