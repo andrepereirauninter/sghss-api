@@ -1,4 +1,4 @@
-import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -7,9 +7,4 @@ export class CreateAdministratorPayload {
   @IsString()
   @IsNotEmpty()
   name: string;
-
-  @ApiProperty()
-  @IsBoolean()
-  @IsNotEmpty()
-  active: boolean;
 }

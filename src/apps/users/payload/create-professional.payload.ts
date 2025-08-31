@@ -1,4 +1,4 @@
-import { IsBoolean, IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
 
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -19,9 +19,4 @@ export class CreateProfessionalPayload {
   @IsString()
   @IsNotEmpty()
   speciality: string;
-
-  @ApiProperty()
-  @IsBoolean()
-  @IsNotEmpty()
-  active: boolean;
 }
