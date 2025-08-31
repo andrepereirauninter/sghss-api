@@ -56,7 +56,7 @@ describe('UserController (e2e)', () => {
         app,
         email: 'patient@email.com',
         name: 'patient',
-        cpf: 'any_cpf',
+        cpf: '38843878042',
       });
 
       const response = await request(app.getHttpServer())
@@ -136,7 +136,7 @@ describe('UserController (e2e)', () => {
         app,
         email: 'patient@email.com',
         name: 'patient',
-        cpf: 'any_cpf',
+        cpf: '38843878042',
       });
 
       const payload: FilterAllUsersPayload = {
@@ -192,7 +192,7 @@ describe('UserController (e2e)', () => {
         app,
         email: 'patient@email.com',
         name: 'patient',
-        cpf: 'any_cpf',
+        cpf: '38843878042',
       });
 
       const payload: FilterAllUsersPayload = {
@@ -252,7 +252,7 @@ describe('UserController (e2e)', () => {
         app,
         email: 'patient@email.com',
         name: 'patient',
-        cpf: 'any_cpf',
+        cpf: '38843878042',
       });
 
       const response = await request(app.getHttpServer())
@@ -299,7 +299,7 @@ describe('UserController (e2e)', () => {
         app,
         email: 'patient@email.com',
         name: 'patient',
-        cpf: 'any_cpf',
+        cpf: '38843878042',
       });
 
       const payload: FilterSearchPayload = {
@@ -417,7 +417,7 @@ describe('UserController (e2e)', () => {
         acceptedTerms: true,
         patient: {
           name: 'any_name',
-          cpf: 'any_cpf',
+          cpf: '38843878042',
           birthDate: '2025-01-01',
           contact: 'any_contact',
         },
@@ -474,7 +474,7 @@ describe('UserController (e2e)', () => {
       const { user: existingUser } = await createPatientMock({
         app,
         email: 'any_email@email.com',
-        cpf: 'any_cpf',
+        cpf: '38843878042',
       });
 
       const payload: CreateUserPayload = {
@@ -485,7 +485,7 @@ describe('UserController (e2e)', () => {
         acceptedTerms: true,
         patient: {
           name: 'any_name',
-          cpf: 'other_cpf',
+          cpf: '61416998047',
           birthDate: '2025-01-01',
           contact: 'any_contact',
         },
@@ -508,7 +508,7 @@ describe('UserController (e2e)', () => {
       const { user: existingUser } = await createPatientMock({
         app,
         email: 'any_email@email.com',
-        cpf: 'any_cpf',
+        cpf: '38843878042',
       });
 
       const payload: CreateUserPayload = {
@@ -685,7 +685,7 @@ describe('UserController (e2e)', () => {
       const { user: patient } = await createPatientMock({
         app,
         email: 'patient@email.com',
-        cpf: 'any_cpf',
+        cpf: '38843878042',
       });
 
       const response = await request(app.getHttpServer())
@@ -944,13 +944,13 @@ describe('UserController (e2e)', () => {
         app,
         email: 'patient@email.com',
         name: 'any_name',
-        cpf: 'any_cpf',
+        cpf: '38843878042',
       });
 
       const payload: UpdatePatientPayload = {
         email: 'updated_patient@email.com',
         name: 'updated_name',
-        cpf: 'updated_cpf',
+        cpf: '49312715020',
         birthDate: '2025-01-01',
         contact: 'updated_contact',
       };
@@ -1054,20 +1054,20 @@ describe('UserController (e2e)', () => {
         app,
         email: 'existing_patient@email.com',
         name: 'any_name',
-        cpf: 'existing_cpf',
+        cpf: '18270122009',
       });
 
       const { user: patientToUpdate } = await createPatientMock({
         app,
         email: 'patient_to_update@email.com',
         name: 'any_name',
-        cpf: 'any_cpf',
+        cpf: '38843878042',
       });
 
       const payload: UpdatePatientPayload = {
         email: existingPatient.email,
         name: 'updated_name',
-        cpf: 'updated_cpf',
+        cpf: '61416998047',
         birthDate: '2025-01-01',
         contact: 'updated_contact',
       };
@@ -1090,14 +1090,14 @@ describe('UserController (e2e)', () => {
         app,
         email: 'existing_patient@email.com',
         name: 'any_name',
-        cpf: 'existing_cpf',
+        cpf: '61416998047',
       });
 
       const { user: patientToUpdate } = await createPatientMock({
         app,
         email: 'patient_to_update@email.com',
         name: 'any_name',
-        cpf: 'any_cpf',
+        cpf: '38843878042',
       });
 
       const payload: UpdatePatientPayload = {
@@ -1171,7 +1171,7 @@ describe('UserController (e2e)', () => {
       const payload: UpdatePatientPayload = {
         email: 'any_email@email.com',
         name: 'any_name',
-        cpf: 'any_cpf',
+        cpf: '38843878042',
         birthDate: '2025-01-01',
         contact: 'any_contact',
       };
@@ -1319,7 +1319,7 @@ describe('UserController (e2e)', () => {
       const { user: patient } = await createPatientMock({
         app,
         email: 'admin@email.com',
-        cpf: 'any_cpf',
+        cpf: '38843878042',
       });
 
       const response = await request(app.getHttpServer())

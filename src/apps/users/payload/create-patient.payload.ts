@@ -3,11 +3,12 @@ import { IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 import { EmptyToUndefined } from '../../../common/decorators/empty-to-undefined.decorator';
+import { IsCpf } from '../../../common/decorators/is-cpf.decorator';
 import { IsOnlyDate } from '../../../common/decorators/is-only-date.decorator';
 
 export class CreatePatientPayload {
   @ApiProperty()
-  @IsString()
+  @IsCpf()
   @IsNotEmpty()
   @EmptyToUndefined()
   cpf: string;
