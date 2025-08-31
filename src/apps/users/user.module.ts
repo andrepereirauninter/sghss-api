@@ -30,5 +30,6 @@ import { UserService } from './user.service';
     PatientService,
     PatientRepository,
   ],
+  exports: [UserService],
 })
 export class UserModule {}

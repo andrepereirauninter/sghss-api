@@ -4,9 +4,11 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  UnauthorizedException,
 } from '@nestjs/common';
 
 import { AdministratorService } from './administrator.service';
+import { User } from './entities/user.entity';
 import { UserRole } from './enums/user-role.enum';
 import { PatientService } from './patient.service';
 import { CreateUserPayload } from './payload/create-user.payload';
@@ -73,6 +75,37 @@ export class UserService {
       throw error;
     } finally {
       await queryRunner.release();
+    }
+  }
+
+  findByIdWithRelations(id: string) {
+    return this.repository.findOne({
+      where: { id },
+      relations: {
+        administrator: true,
+        professional: true,
+        patient: true,
+      },
+    });
+  }
+
+  async validateUser(email: string, password: string) {
+    const user = await this.repository.findActiveByEmail(email);
+
+    if (!user) {
+      throw new UnauthorizedException('Credenciais inválidas.');
+    }
+
+    this.validatePassword(user, password);
+
+    delete user.password;
+
+    return user;
+  }
+
+  private validatePassword(user: User, password: string) {
+    if (!user.comparePassword(password)) {
+      throw new UnauthorizedException('Credenciais inválidas.');
     }
   }
 }

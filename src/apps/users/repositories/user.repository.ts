@@ -12,4 +12,32 @@ export class UserRepository extends BaseRepository<User> {
   ) {
     super(repository.target, repository.manager, repository.queryRunner);
   }
+
+  async findActiveByEmail(email: string) {
+    return this.createQueryBuilder('user')
+      .leftJoin('user.administrator', 'administrator')
+      .leftJoin('user.professional', 'professional')
+      .leftJoin('user.patient', 'patient')
+      .where('user.email = :email', { email })
+      .andWhere('user.active = :active', { active: true })
+      .select([
+        'user.id',
+        'user.email',
+        'user.password',
+        'user.active',
+        'user.role',
+        'administrator.id',
+        'administrator.name',
+        'professional.id',
+        'professional.name',
+        'professional.speciality',
+        'professional.type',
+        'patient.id',
+        'patient.cpf',
+        'patient.name',
+        'patient.birthDate',
+        'patient.contact',
+      ])
+      .getOne();
+  }
 }

@@ -3,12 +3,12 @@ import * as Joi from 'joi';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
-import { apiConfig, databaseConfig } from './custom-config';
+import { apiConfig, authConfig, databaseConfig } from './custom-config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      load: [apiConfig, databaseConfig],
+      load: [apiConfig, databaseConfig, authConfig],
       isGlobal: true,
       envFilePath: '.env',
       validationSchema: Joi.object({
@@ -29,6 +29,8 @@ import { apiConfig, databaseConfig } from './custom-config';
         TEST_DATABASE_NAME: Joi.string().required(),
         TEST_DATABASE_MIGRATION_RUN: Joi.boolean().optional(),
         TEST_DATABASE_SYNCHRONIZE: Joi.string().optional(),
+        JWT_SECRET: Joi.string().required(),
+        JWT_EXPIRATION: Joi.string().required(),
       }),
     }),
   ],

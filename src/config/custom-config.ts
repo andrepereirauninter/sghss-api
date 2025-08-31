@@ -43,3 +43,8 @@ const databaseConfiguration = {
   migrationsRun: process.env.DATABASE_MIGRATION_RUN === 'true',
   synchronize: process.env.DATABASE_SYNCHRONIZE === 'true',
 };
+
+export const authConfig = registerAs('auth', () => ({
+  jwtSecret: process.env.JWT_SECRET,
+  jwtExpiresIn: process.env.JWT_EXPIRATION,
+}));

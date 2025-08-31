@@ -57,7 +57,6 @@ describe('UserController (e2e)', () => {
           administrator: {
             id: true,
             name: true,
-            active: true,
           },
         },
         relations: {
@@ -114,7 +113,6 @@ describe('UserController (e2e)', () => {
           patient: {
             id: true,
             name: true,
-            active: true,
             cpf: true,
             birthDate: true,
             contact: true,
@@ -176,7 +174,6 @@ describe('UserController (e2e)', () => {
           professional: {
             id: true,
             name: true,
-            active: true,
             type: true,
             speciality: true,
           },

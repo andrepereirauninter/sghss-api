@@ -8,9 +8,6 @@ export class Administrator extends BaseEntity<Administrator> {
   @Column({ name: 'nome' })
   name: string;
 
-  @Column({ name: 'ativo' })
-  active: boolean;
-
   @Column({ name: 'usuario_id' })
   userId?: string;
 

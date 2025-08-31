@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { AppointmentModule } from './apps/appointments/appointment.module';
+import { AuthModule } from './apps/auth/auth.module';
 import { UnitModule } from './apps/units/unit.module';
 import { UserModule } from './apps/users/user.module';
 import { CustomConfigModule } from './config/custom-config.module';
@@ -15,6 +16,7 @@ import { HealthModule } from './providers/health/health.module';
     UserModule,
     UnitModule,
     AppointmentModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],

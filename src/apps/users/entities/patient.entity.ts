@@ -5,7 +5,7 @@ import { User } from './user.entity';
 
 @Entity('pacientes')
 export class Patient extends BaseEntity<Patient> {
-  @Column()
+  @Column({ unique: true })
   cpf: string;
 
   @Column({ name: 'nome' })
@@ -16,9 +16,6 @@ export class Patient extends BaseEntity<Patient> {
 
   @Column({ name: 'contato' })
   contact: string;
-
-  @Column({ name: 'ativo' })
-  active: boolean;
 
   @Column({ name: 'usuario_id' })
   userId?: string;

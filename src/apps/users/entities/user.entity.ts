@@ -13,7 +13,7 @@ export class User extends BaseEntity<User> {
   email: string;
 
   @Column({ select: false, name: 'senha' })
-  password: string;
+  password?: string;
 
   @Column({ name: 'ativo' })
   active: boolean;
@@ -21,13 +21,19 @@ export class User extends BaseEntity<User> {
   @Column({ name: 'perfil', type: 'enum', enum: UserRole })
   role: UserRole;
 
-  @OneToOne(() => Administrator, (administrator) => administrator.user)
+  @OneToOne(() => Administrator, (administrator) => administrator.user, {
+    cascade: true,
+  })
   administrator: Administrator;
 
-  @OneToOne(() => Professional, (professional) => professional.user)
+  @OneToOne(() => Professional, (professional) => professional.user, {
+    cascade: true,
+  })
   professional: Professional;
 
-  @OneToOne(() => Patient, (patient) => patient.user)
+  @OneToOne(() => Patient, (patient) => patient.user, {
+    cascade: true,
+  })
   patient: Patient;
 
   @BeforeInsert()

@@ -15,9 +15,6 @@ export class Professional extends BaseEntity<Professional> {
   @Column({ name: 'tipo', type: 'enum', enum: ProfessionalType })
   type: ProfessionalType;
 
-  @Column({ name: 'ativo' })
-  active: boolean;
-
   @Column({ name: 'usuario_id' })
   userId?: string;
 
