@@ -20,7 +20,9 @@ export class Patient extends BaseEntity<Patient> {
   @Column({ name: 'usuario_id' })
   userId?: string;
 
-  @OneToOne(() => User)
+  @OneToOne(() => User, (user) => user.patient, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'usuario_id' })
   user?: User;
 }

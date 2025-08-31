@@ -751,4 +751,90 @@ describe('UserController (e2e)', () => {
       });
     });
   });
+
+  describe('/users/:id (DELETE)', () => {
+    it(`should delete a administrator`, async () => {
+      const { user: administrator } = await createAdministratorMock({
+        app,
+        email: 'admin@email.com',
+        active: true,
+      });
+
+      const response = await request(app.getHttpServer())
+        .delete(`/users/${administrator.id}`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
+        .send();
+
+      expect(response.status).toBe(HttpStatus.NO_CONTENT);
+
+      const responseInDb = await repository.findOne({
+        where: {
+          id: administrator.id,
+        },
+      });
+
+      expect(responseInDb).toBeNull();
+    });
+
+    it(`should delete a professional`, async () => {
+      const { user: professional } = await createProfessionalMock({
+        app,
+        email: 'admin@email.com',
+      });
+
+      const response = await request(app.getHttpServer())
+        .delete(`/users/${professional.id}`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
+        .send();
+
+      expect(response.status).toBe(HttpStatus.NO_CONTENT);
+
+      const responseInDb = await repository.findOne({
+        where: {
+          id: professional.id,
+        },
+      });
+
+      expect(responseInDb).toBeNull();
+    });
+
+    it(`should delete a patient`, async () => {
+      const { user: patient } = await createPatientMock({
+        app,
+        email: 'admin@email.com',
+        cpf: 'any_cpf',
+      });
+
+      const response = await request(app.getHttpServer())
+        .delete(`/users/${patient.id}`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
+        .send();
+
+      expect(response.status).toBe(HttpStatus.NO_CONTENT);
+
+      const responseInDb = await repository.findOne({
+        where: {
+          id: patient.id,
+        },
+      });
+
+      expect(responseInDb).toBeNull();
+    });
+
+    it('should not delete a user if it does not exist', async () => {
+      const id = randomUUID();
+
+      const response = await request(app.getHttpServer())
+        .delete(`/users/${id}`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
+        .send();
+
+      expect(response.status).toBe(HttpStatus.NOT_FOUND);
+      expect(response.body).toEqual({
+        error: 'Not Found',
+        message: `O usuário com ID ${id} não foi encontrado.`,
+        statusCode: HttpStatus.NOT_FOUND,
+      });
+    });
+  });
 });

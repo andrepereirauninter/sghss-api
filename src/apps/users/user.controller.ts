@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -147,5 +148,28 @@ export class UserController {
   @Roles(UserRole.ADMIN)
   deactivate(@Param('id', UUIDValidationPipe) id: string) {
     return this.service.deactivate(id);
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({
+    summary: 'Remover um usuário',
+  })
+  @ApiNoContentResponse({
+    description: 'Usuário desativado com sucesso.',
+  })
+  @ApiBadRequestResponse({
+    description: apiResponses.badRequestWithValidation,
+  })
+  @ApiUnauthorizedResponse({
+    description: apiResponses.unauthorizedDefaultMessage,
+  })
+  @ApiForbiddenResponse({
+    description: apiResponses.forbiddenDefaultMessage,
+  })
+  @JwtAuth()
+  @Roles(UserRole.ADMIN)
+  remove(@Param('id', UUIDValidationPipe) id: string) {
+    return this.service.remove(id);
   }
 }

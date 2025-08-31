@@ -11,7 +11,9 @@ export class Administrator extends BaseEntity<Administrator> {
   @Column({ name: 'usuario_id' })
   userId?: string;
 
-  @OneToOne(() => User)
+  @OneToOne(() => User, (user) => user.administrator, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'usuario_id' })
   user?: User;
 }

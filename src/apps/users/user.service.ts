@@ -112,4 +112,14 @@ export class UserService {
     user.active = false;
     await this.repository.save(user);
   }
+
+  async remove(id: string) {
+    const user = await this.repository.findOneBy({ id });
+
+    if (!user) {
+      throw new NotFoundException(`O usuário com ID ${id} não foi encontrado.`);
+    }
+
+    await this.repository.delete(id);
+  }
 }
