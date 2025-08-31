@@ -7,7 +7,7 @@ import { ProfessionalType } from '../../../apps/users/enums/professional-type.en
 import { UserRole } from '../../../apps/users/enums/user-role.enum';
 import { CreateUserPayload } from '../../../apps/users/payload/create-user.payload';
 import { FilterAllUsersPayload } from '../../../apps/users/payload/filter-all-users.payload';
-import { FilterSearchPayload } from '../../../apps/users/payload/filter-search-users.payload';
+import { FilterSearchUsersPayload } from '../../../apps/users/payload/filter-search-users.payload';
 import { UpdateAdministratorPayload } from '../../../apps/users/payload/update-administrator.payload';
 import { UpdatePasswordPayload } from '../../../apps/users/payload/update-password.payload';
 import { UpdatePatientPayload } from '../../../apps/users/payload/update-patient.payload';
@@ -302,7 +302,7 @@ describe('UserController (e2e)', () => {
         cpf: '38843878042',
       });
 
-      const payload: FilterSearchPayload = {
+      const payload: FilterSearchUsersPayload = {
         name: patient.patient.name,
         role: [patient.role],
       };

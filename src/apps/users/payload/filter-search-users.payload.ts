@@ -6,7 +6,7 @@ import { EmptyToUndefined } from '../../../common/decorators/empty-to-undefined.
 import { QueryStringToArray } from '../../../common/decorators/query-string-to-array.decorator';
 import { UserRole } from '../enums/user-role.enum';
 
-export class FilterSearchPayload {
+export class FilterSearchUsersPayload {
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()

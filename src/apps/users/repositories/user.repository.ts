@@ -8,7 +8,7 @@ import { BaseRepository } from '../../../common/repositories/base-repository';
 import { User } from '../entities/user.entity';
 import { UserRole } from '../enums/user-role.enum';
 import { FilterAllUsersPayload } from '../payload/filter-all-users.payload';
-import { FilterSearchPayload } from '../payload/filter-search-users.payload';
+import { FilterSearchUsersPayload } from '../payload/filter-search-users.payload';
 
 @Injectable()
 export class UserRepository extends BaseRepository<User> {
@@ -92,6 +92,27 @@ export class UserRepository extends BaseRepository<User> {
       .orderBy('user.createdAt', 'DESC');
 
     return paginate(query, page, limit);
+  }
+
+  search(
+    payload: FilterSearchUsersPayload,
+  ): Promise<{ id: string; name: string }[]> {
+    const { name = '' } = payload;
+
+    return this.createQueryBuilder('user')
+      .leftJoin('user.administrator', 'administrator')
+      .leftJoin('user.professional', 'professional')
+      .leftJoin('user.patient', 'patient')
+      .where('administrator.name ILIKE :name', { name: `%${name}%` })
+      .orWhere('professional.name ILIKE :name', { name: `%${name}%` })
+      .orWhere('patient.name ILIKE :name', { name: `%${name}%` })
+      .select('user.id', 'id')
+      .addSelect(
+        'COALESCE(administrator.name, professional.name, patient.name)',
+        'name',
+      )
+      .orderBy('user.createdAt', 'DESC')
+      .getRawMany<{ id: string; name: string }>();
   }
 
   findDetails(id: string) {
@@ -186,26 +207,5 @@ export class UserRepository extends BaseRepository<User> {
         'patient.contact',
       ])
       .getOne();
-  }
-
-  search(
-    payload: FilterSearchPayload,
-  ): Promise<{ id: string; name: string }[]> {
-    const { name = '' } = payload;
-
-    return this.createQueryBuilder('user')
-      .leftJoin('user.administrator', 'administrator')
-      .leftJoin('user.professional', 'professional')
-      .leftJoin('user.patient', 'patient')
-      .where('administrator.name ILIKE :name', { name: `%${name}%` })
-      .orWhere('professional.name ILIKE :name', { name: `%${name}%` })
-      .orWhere('patient.name ILIKE :name', { name: `%${name}%` })
-      .select('user.id', 'id')
-      .addSelect(
-        'COALESCE(administrator.name, professional.name, patient.name)',
-        'name',
-      )
-      .orderBy('user.createdAt', 'DESC')
-      .getRawMany<{ id: string; name: string }>();
   }
 }

@@ -30,7 +30,7 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from './enums/user-role.enum';
 import { CreateUserPayload } from './payload/create-user.payload';
 import { FilterAllUsersPayload } from './payload/filter-all-users.payload';
-import { FilterSearchPayload } from './payload/filter-search-users.payload';
+import { FilterSearchUsersPayload } from './payload/filter-search-users.payload';
 import { UpdateAdministratorPayload } from './payload/update-administrator.payload';
 import { UpdatePasswordPayload } from './payload/update-password.payload';
 import { UpdatePatientPayload } from './payload/update-patient.payload';
@@ -81,7 +81,7 @@ export class UserController {
     description: apiResponses.forbiddenDefaultMessage,
   })
   @JwtAuth()
-  search(@Query() payload: FilterSearchPayload) {
+  search(@Query() payload: FilterSearchUsersPayload) {
     return this.service.search(payload);
   }
 
