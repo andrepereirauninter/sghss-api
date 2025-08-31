@@ -30,6 +30,7 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from './enums/user-role.enum';
 import { CreateUserPayload } from './payload/create-user.payload';
 import { FilterAllUsersPayload } from './payload/filter-all-users.payload';
+import { FilterSearchPayload } from './payload/filter-search-users.payload';
 import { UpdateAdministratorPayload } from './payload/update-administrator.payload';
 import { UpdatePasswordPayload } from './payload/update-password.payload';
 import { UpdatePatientPayload } from './payload/update-patient.payload';
@@ -61,6 +62,27 @@ export class UserController {
   @Roles(UserRole.ADMIN)
   findAll(@Query() payload: FilterAllUsersPayload) {
     return this.service.findAll(payload);
+  }
+
+  @Get('search')
+  @ApiOperation({
+    summary: 'Buscar usuários para serem usados em select',
+  })
+  @ApiOkResponse({
+    description: 'Usuários listados com sucesso.',
+  })
+  @ApiBadRequestResponse({
+    description: apiResponses.badRequestWithValidation,
+  })
+  @ApiUnauthorizedResponse({
+    description: apiResponses.unauthorizedDefaultMessage,
+  })
+  @ApiForbiddenResponse({
+    description: apiResponses.forbiddenDefaultMessage,
+  })
+  @JwtAuth()
+  search(@Query() payload: FilterSearchPayload) {
+    return this.service.search(payload);
   }
 
   @Post()

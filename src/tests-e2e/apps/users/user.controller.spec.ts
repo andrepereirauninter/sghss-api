@@ -7,6 +7,7 @@ import { ProfessionalType } from '../../../apps/users/enums/professional-type.en
 import { UserRole } from '../../../apps/users/enums/user-role.enum';
 import { CreateUserPayload } from '../../../apps/users/payload/create-user.payload';
 import { FilterAllUsersPayload } from '../../../apps/users/payload/filter-all-users.payload';
+import { FilterSearchPayload } from '../../../apps/users/payload/filter-search-users.payload';
 import { UpdateAdministratorPayload } from '../../../apps/users/payload/update-administrator.payload';
 import { UpdatePasswordPayload } from '../../../apps/users/payload/update-password.payload';
 import { UpdatePatientPayload } from '../../../apps/users/payload/update-patient.payload';
@@ -35,6 +36,292 @@ describe('UserController (e2e)', () => {
 
   afterEach(async () => {
     await generateDefaultAppAfterEachSetup(app);
+  });
+
+  describe('/users (GET)', () => {
+    it('should list users', async () => {
+      const { user: administrator } = await createAdministratorMock({
+        app,
+        email: 'admin@email.com',
+        name: 'admin',
+      });
+
+      const { user: professional } = await createProfessionalMock({
+        app,
+        email: 'professional@email.com',
+        name: 'professional',
+      });
+
+      const { user: patient } = await createPatientMock({
+        app,
+        email: 'patient@email.com',
+        name: 'patient',
+        cpf: 'any_cpf',
+      });
+
+      const response = await request(app.getHttpServer())
+        .get(`/users`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
+        .send();
+
+      expect(response.status).toBe(HttpStatus.OK);
+
+      expect(response.body).toMatchObject({
+        data: [
+          {
+            id: patient.id,
+            email: patient.email,
+            active: patient.active,
+            role: patient.role,
+            patient: {
+              id: patient.patient.id,
+              name: patient.patient.name,
+            },
+          },
+          {
+            id: professional.id,
+            email: professional.email,
+            active: professional.active,
+            role: professional.role,
+            professional: {
+              id: professional.professional.id,
+              name: professional.professional.name,
+            },
+          },
+          {
+            id: administrator.id,
+            email: administrator.email,
+            active: administrator.active,
+            role: administrator.role,
+            administrator: {
+              id: administrator.administrator.id,
+              name: administrator.administrator.name,
+            },
+          },
+          {
+            id: loginResponse.body.user.id,
+            email: loginResponse.body.user.email,
+            active: loginResponse.body.user.active,
+            role: loginResponse.body.user.role,
+            administrator: {
+              id: loginResponse.body.user.administrator.id,
+              name: loginResponse.body.user.administrator.name,
+            },
+          },
+        ],
+        pagination: {
+          currentPage: 1,
+          limitPerPage: 10,
+          totalItems: 4,
+          previousPage: null,
+          nextPage: null,
+        },
+      });
+    });
+
+    it('should paginate users', async () => {
+      await createAdministratorMock({
+        app,
+        email: 'admin@email.com',
+        name: 'admin',
+      });
+
+      const { user: professional } = await createProfessionalMock({
+        app,
+        email: 'professional@email.com',
+        name: 'professional',
+      });
+
+      await createPatientMock({
+        app,
+        email: 'patient@email.com',
+        name: 'patient',
+        cpf: 'any_cpf',
+      });
+
+      const payload: FilterAllUsersPayload = {
+        page: 2,
+        limit: 1,
+      };
+
+      const response = await request(app.getHttpServer())
+        .get(`/users`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
+        .query(payload)
+        .send();
+
+      expect(response.status).toBe(HttpStatus.OK);
+
+      expect(response.body).toMatchObject({
+        data: [
+          {
+            id: professional.id,
+            email: professional.email,
+            active: professional.active,
+            role: professional.role,
+            professional: {
+              id: professional.professional.id,
+              name: professional.professional.name,
+            },
+          },
+        ],
+        pagination: {
+          currentPage: 2,
+          limitPerPage: 1,
+          totalItems: 4,
+          previousPage: 1,
+          nextPage: 3,
+        },
+      });
+    });
+
+    it('should filter users', async () => {
+      await createAdministratorMock({
+        app,
+        email: 'admin@email.com',
+        name: 'admin',
+      });
+
+      await createProfessionalMock({
+        app,
+        email: 'professional@email.com',
+        name: 'professional',
+      });
+
+      const { user: patient } = await createPatientMock({
+        app,
+        email: 'patient@email.com',
+        name: 'patient',
+        cpf: 'any_cpf',
+      });
+
+      const payload: FilterAllUsersPayload = {
+        email: patient.email,
+        active: patient.active,
+        role: [patient.role],
+        name: patient.patient.name,
+      };
+
+      const response = await request(app.getHttpServer())
+        .get(`/users`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
+        .query(payload)
+        .send();
+
+      expect(response.status).toBe(HttpStatus.OK);
+
+      expect(response.body).toMatchObject({
+        data: [
+          {
+            id: patient.id,
+            email: patient.email,
+            active: patient.active,
+            role: patient.role,
+            patient: {
+              id: patient.patient.id,
+              name: patient.patient.name,
+            },
+          },
+        ],
+        pagination: {
+          currentPage: 1,
+          limitPerPage: 10,
+          totalItems: 1,
+          previousPage: null,
+          nextPage: null,
+        },
+      });
+    });
+  });
+
+  describe('/users/search (GET)', () => {
+    it('should search users', async () => {
+      const { user: administrator } = await createAdministratorMock({
+        app,
+        email: 'admin@email.com',
+        name: 'admin',
+      });
+
+      const { user: professional } = await createProfessionalMock({
+        app,
+        email: 'professional@email.com',
+        name: 'professional',
+      });
+
+      const { user: patient } = await createPatientMock({
+        app,
+        email: 'patient@email.com',
+        name: 'patient',
+        cpf: 'any_cpf',
+      });
+
+      const response = await request(app.getHttpServer())
+        .get(`/users/search`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
+        .send();
+
+      expect(response.status).toBe(HttpStatus.OK);
+
+      expect(response.body).toMatchObject([
+        {
+          id: patient.id,
+          name: patient.patient.name,
+        },
+        {
+          id: professional.id,
+          name: professional.professional.name,
+        },
+        {
+          id: administrator.id,
+          name: administrator.administrator.name,
+        },
+        {
+          id: loginResponse.body.user.id,
+          name: loginResponse.body.user.administrator.name,
+        },
+      ]);
+    });
+
+    it('should search with filters', async () => {
+      await createAdministratorMock({
+        app,
+        email: 'admin@email.com',
+        name: 'admin',
+      });
+
+      await createProfessionalMock({
+        app,
+        email: 'professional@email.com',
+        name: 'professional',
+      });
+
+      const { user: patient } = await createPatientMock({
+        app,
+        email: 'patient@email.com',
+        name: 'patient',
+        cpf: 'any_cpf',
+      });
+
+      const payload: FilterSearchPayload = {
+        name: patient.patient.name,
+        role: [patient.role],
+      };
+
+      const response = await request(app.getHttpServer())
+        .get(`/users/search`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
+        .query(payload)
+        .send();
+
+      expect(response.status).toBe(HttpStatus.OK);
+
+      expect(response.body).toMatchObject([
+        {
+          id: patient.id,
+          name: patient.patient.name,
+        },
+      ]);
+    });
   });
 
   describe('/users (POST)', () => {
@@ -339,202 +626,6 @@ describe('UserController (e2e)', () => {
         error: 'Conflict',
         message: `Um usuário com o email ${payload.email} já existe.`,
         statusCode: HttpStatus.CONFLICT,
-      });
-    });
-  });
-
-  describe('/users (GET)', () => {
-    it('should list users', async () => {
-      const { user: administrator } = await createAdministratorMock({
-        app,
-        email: 'admin@email.com',
-        name: 'admin',
-      });
-
-      const { user: professional } = await createProfessionalMock({
-        app,
-        email: 'professional@email.com',
-        name: 'professional',
-      });
-
-      const { user: patient } = await createPatientMock({
-        app,
-        email: 'patient@email.com',
-        name: 'patient',
-        cpf: 'any_cpf',
-      });
-
-      const response = await request(app.getHttpServer())
-        .get(`/users`)
-        .set('Authorization', `Bearer ${loginResponse.body.token}`)
-        .send();
-
-      expect(response.status).toBe(HttpStatus.OK);
-
-      expect(response.body).toMatchObject({
-        data: [
-          {
-            id: patient.id,
-            email: patient.email,
-            active: patient.active,
-            role: patient.role,
-            patient: {
-              id: patient.patient.id,
-              name: patient.patient.name,
-            },
-          },
-          {
-            id: professional.id,
-            email: professional.email,
-            active: professional.active,
-            role: professional.role,
-            professional: {
-              id: professional.professional.id,
-              name: professional.professional.name,
-            },
-          },
-          {
-            id: administrator.id,
-            email: administrator.email,
-            active: administrator.active,
-            role: administrator.role,
-            administrator: {
-              id: administrator.administrator.id,
-              name: administrator.administrator.name,
-            },
-          },
-          {
-            id: loginResponse.body.user.id,
-            email: loginResponse.body.user.email,
-            active: loginResponse.body.user.active,
-            role: loginResponse.body.user.role,
-            administrator: {
-              id: loginResponse.body.user.administrator.id,
-              name: loginResponse.body.user.administrator.name,
-            },
-          },
-        ],
-        pagination: {
-          currentPage: 1,
-          limitPerPage: 10,
-          totalItems: 4,
-          previousPage: null,
-          nextPage: null,
-        },
-      });
-    });
-
-    it('should paginate users', async () => {
-      await createAdministratorMock({
-        app,
-        email: 'admin@email.com',
-        name: 'admin',
-      });
-
-      const { user: professional } = await createProfessionalMock({
-        app,
-        email: 'professional@email.com',
-        name: 'professional',
-      });
-
-      await createPatientMock({
-        app,
-        email: 'patient@email.com',
-        name: 'patient',
-        cpf: 'any_cpf',
-      });
-
-      const payload: FilterAllUsersPayload = {
-        page: 2,
-        limit: 1,
-      };
-
-      const response = await request(app.getHttpServer())
-        .get(`/users`)
-        .set('Authorization', `Bearer ${loginResponse.body.token}`)
-        .query(payload)
-        .send();
-
-      expect(response.status).toBe(HttpStatus.OK);
-
-      expect(response.body).toMatchObject({
-        data: [
-          {
-            id: professional.id,
-            email: professional.email,
-            active: professional.active,
-            role: professional.role,
-            professional: {
-              id: professional.professional.id,
-              name: professional.professional.name,
-            },
-          },
-        ],
-        pagination: {
-          currentPage: 2,
-          limitPerPage: 1,
-          totalItems: 4,
-          previousPage: 1,
-          nextPage: 3,
-        },
-      });
-    });
-
-    it('should filter users', async () => {
-      await createAdministratorMock({
-        app,
-        email: 'admin@email.com',
-        name: 'admin',
-      });
-
-      await createProfessionalMock({
-        app,
-        email: 'professional@email.com',
-        name: 'professional',
-      });
-
-      const { user: patient } = await createPatientMock({
-        app,
-        email: 'patient@email.com',
-        name: 'patient',
-        cpf: 'any_cpf',
-      });
-
-      const payload: FilterAllUsersPayload = {
-        email: patient.email,
-        active: patient.active,
-        role: [patient.role],
-        name: patient.patient.name,
-      };
-
-      const response = await request(app.getHttpServer())
-        .get(`/users`)
-        .set('Authorization', `Bearer ${loginResponse.body.token}`)
-        .query(payload)
-        .send();
-
-      expect(response.status).toBe(HttpStatus.OK);
-
-      expect(response.body).toMatchObject({
-        data: [
-          {
-            id: patient.id,
-            email: patient.email,
-            active: patient.active,
-            role: patient.role,
-            patient: {
-              id: patient.patient.id,
-              name: patient.patient.name,
-            },
-          },
-        ],
-        pagination: {
-          currentPage: 1,
-          limitPerPage: 10,
-          totalItems: 1,
-          previousPage: null,
-          nextPage: null,
-        },
       });
     });
   });

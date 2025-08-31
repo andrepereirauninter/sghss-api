@@ -11,6 +11,7 @@ import { UserRole } from './enums/user-role.enum';
 import { PatientService } from './patient.service';
 import { CreateUserPayload } from './payload/create-user.payload';
 import { FilterAllUsersPayload } from './payload/filter-all-users.payload';
+import { FilterSearchPayload } from './payload/filter-search-users.payload';
 import { UpdateAdministratorPayload } from './payload/update-administrator.payload';
 import { UpdatePasswordPayload } from './payload/update-password.payload';
 import { UpdatePatientPayload } from './payload/update-patient.payload';
@@ -26,6 +27,10 @@ export class UserService {
 
   findAll(payload: FilterAllUsersPayload) {
     return this.repository.findAll(payload);
+  }
+
+  search(payload: FilterSearchPayload) {
+    return this.repository.search(payload);
   }
 
   async create(payload: CreateUserPayload) {
