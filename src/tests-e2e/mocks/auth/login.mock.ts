@@ -12,8 +12,8 @@ import { createProfessionalMock } from '../users/create-professional.mock';
 export async function loginMock(
   app: INestApplication,
   payload?: LoginPayload,
-  userRole: UserRole = UserRole.ADMIN,
-) {
+  userRole = UserRole.ADMIN,
+): Promise<{ response: request.Response; user?: User }> {
   let user: User | undefined;
 
   if (!payload) {
