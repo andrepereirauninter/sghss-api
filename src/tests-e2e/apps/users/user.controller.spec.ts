@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import request from 'supertest';
 
 import { HttpStatus, INestApplication } from '@nestjs/common';
@@ -603,6 +604,150 @@ describe('UserController (e2e)', () => {
           birthDate: patient.patient.birthDate,
           contact: patient.patient.contact,
         },
+      });
+    });
+
+    it('should not get details of a user if it does not exist', async () => {
+      const id = randomUUID();
+
+      const response = await request(app.getHttpServer())
+        .get(`/users/${id}`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
+        .send();
+
+      expect(response.status).toBe(HttpStatus.NOT_FOUND);
+      expect(response.body).toEqual({
+        error: 'Not Found',
+        message: `O usuário com ID ${id} não foi encontrado.`,
+        statusCode: HttpStatus.NOT_FOUND,
+      });
+    });
+  });
+
+  describe('/users/:id/activate (POST)', () => {
+    it(`should activate a user`, async () => {
+      const { user: administrator } = await createAdministratorMock({
+        app,
+        email: 'admin@email.com',
+        active: false,
+      });
+
+      const response = await request(app.getHttpServer())
+        .post(`/users/${administrator.id}/activate`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
+        .send();
+
+      expect(response.status).toBe(HttpStatus.NO_CONTENT);
+
+      const responseInDb = await repository.findOne({
+        where: {
+          id: administrator.id,
+        },
+      });
+
+      expect(responseInDb?.active).toBe(true);
+    });
+
+    it('should do nothing if the user already is active', async () => {
+      const { user: administrator } = await createAdministratorMock({
+        app,
+        email: 'admin@email.com',
+        active: true,
+      });
+
+      const response = await request(app.getHttpServer())
+        .post(`/users/${administrator.id}/activate`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
+        .send();
+
+      expect(response.status).toBe(HttpStatus.NO_CONTENT);
+
+      const responseInDb = await repository.findOne({
+        where: {
+          id: administrator.id,
+        },
+      });
+
+      expect(responseInDb?.active).toBe(true);
+    });
+
+    it('should not activate a user if it does not exist', async () => {
+      const id = randomUUID();
+
+      const response = await request(app.getHttpServer())
+        .post(`/users/${id}/activate`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
+        .send();
+
+      expect(response.status).toBe(HttpStatus.NOT_FOUND);
+      expect(response.body).toEqual({
+        error: 'Not Found',
+        message: `O usuário com ID ${id} não foi encontrado.`,
+        statusCode: HttpStatus.NOT_FOUND,
+      });
+    });
+  });
+
+  describe('/users/:id/deactivate (POST)', () => {
+    it(`should deactivate a user`, async () => {
+      const { user: administrator } = await createAdministratorMock({
+        app,
+        email: 'admin@email.com',
+        active: true,
+      });
+
+      const response = await request(app.getHttpServer())
+        .post(`/users/${administrator.id}/deactivate`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
+        .send();
+
+      expect(response.status).toBe(HttpStatus.NO_CONTENT);
+
+      const responseInDb = await repository.findOne({
+        where: {
+          id: administrator.id,
+        },
+      });
+
+      expect(responseInDb?.active).toBe(false);
+    });
+
+    it('should do nothing if the user already is inactive', async () => {
+      const { user: administrator } = await createAdministratorMock({
+        app,
+        email: 'admin@email.com',
+        active: false,
+      });
+
+      const response = await request(app.getHttpServer())
+        .post(`/users/${administrator.id}/deactivate`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
+        .send();
+
+      expect(response.status).toBe(HttpStatus.NO_CONTENT);
+
+      const responseInDb = await repository.findOne({
+        where: {
+          id: administrator.id,
+        },
+      });
+
+      expect(responseInDb?.active).toBe(false);
+    });
+
+    it('should not deactivate a user if it does not exist', async () => {
+      const id = randomUUID();
+
+      const response = await request(app.getHttpServer())
+        .post(`/users/${id}/deactivate`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
+        .send();
+
+      expect(response.status).toBe(HttpStatus.NOT_FOUND);
+      expect(response.body).toEqual({
+        error: 'Not Found',
+        message: `O usuário com ID ${id} não foi encontrado.`,
+        statusCode: HttpStatus.NOT_FOUND,
       });
     });
   });

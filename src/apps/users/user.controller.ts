@@ -1,8 +1,18 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Post,
+  Query,
+} from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
   ApiForbiddenResponse,
+  ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -70,7 +80,7 @@ export class UserController {
 
   @Get(':id')
   @ApiOperation({
-    summary: 'Obter detalhes de um usuário',
+    summary: 'Obter detalhes de um usuário.',
   })
   @ApiCreatedResponse({
     description: 'Detalhes de um usuário obtidos com sucesso.',
@@ -91,5 +101,51 @@ export class UserController {
   @Roles(UserRole.ADMIN)
   getDetails(@Param('id', UUIDValidationPipe) id: string) {
     return this.service.getDetails(id);
+  }
+
+  @Post(':id/activate')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({
+    summary: 'Ativar um usuário.',
+  })
+  @ApiNoContentResponse({
+    description: 'Usuário ativado com sucesso.',
+  })
+  @ApiBadRequestResponse({
+    description: apiResponses.badRequestWithValidation,
+  })
+  @ApiUnauthorizedResponse({
+    description: apiResponses.unauthorizedDefaultMessage,
+  })
+  @ApiForbiddenResponse({
+    description: apiResponses.forbiddenDefaultMessage,
+  })
+  @JwtAuth()
+  @Roles(UserRole.ADMIN)
+  activate(@Param('id', UUIDValidationPipe) id: string) {
+    return this.service.activate(id);
+  }
+
+  @Post(':id/deactivate')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({
+    summary: 'Desativar um usuário.',
+  })
+  @ApiNoContentResponse({
+    description: 'Usuário desativado com sucesso.',
+  })
+  @ApiBadRequestResponse({
+    description: apiResponses.badRequestWithValidation,
+  })
+  @ApiUnauthorizedResponse({
+    description: apiResponses.unauthorizedDefaultMessage,
+  })
+  @ApiForbiddenResponse({
+    description: apiResponses.forbiddenDefaultMessage,
+  })
+  @JwtAuth()
+  @Roles(UserRole.ADMIN)
+  deactivate(@Param('id', UUIDValidationPipe) id: string) {
+    return this.service.deactivate(id);
   }
 }

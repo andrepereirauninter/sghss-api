@@ -85,9 +85,31 @@ export class UserService {
     const user = await this.repository.findDetails(id);
 
     if (!user) {
-      throw new NotFoundException(`Usuário com ID ${id} não foi encontrado.`);
+      throw new NotFoundException(`O usuário com ID ${id} não foi encontrado.`);
     }
 
     return user;
+  }
+
+  async activate(id: string) {
+    const user = await this.repository.findOneBy({ id });
+
+    if (!user) {
+      throw new NotFoundException(`O usuário com ID ${id} não foi encontrado.`);
+    }
+
+    user.active = true;
+    await this.repository.save(user);
+  }
+
+  async deactivate(id: string) {
+    const user = await this.repository.findOneBy({ id });
+
+    if (!user) {
+      throw new NotFoundException(`O usuário com ID ${id} não foi encontrado.`);
+    }
+
+    user.active = false;
+    await this.repository.save(user);
   }
 }
