@@ -40,6 +40,11 @@ export class CreateUserPayload {
   @IsNotEmpty()
   role: UserRole;
 
+  @ApiProperty()
+  @IsBoolean()
+  @IsNotEmpty()
+  acceptedTerms: boolean;
+
   @ApiPropertyOptional()
   @ValidateNested()
   @Type(() => CreateAdministratorPayload)

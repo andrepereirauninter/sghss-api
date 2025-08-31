@@ -43,6 +43,7 @@ describe('UserController (e2e)', () => {
         password: 'Anypassword@123',
         active: true,
         role: UserRole.ADMIN,
+        acceptedTerms: true,
         administrator: {
           name: 'any_name',
         },
@@ -99,6 +100,7 @@ describe('UserController (e2e)', () => {
         email: existingUser.email,
         active: true,
         role: UserRole.ADMIN,
+        acceptedTerms: true,
         password: 'Anypassword@123',
         administrator: {
           name: 'any_name',
@@ -124,6 +126,7 @@ describe('UserController (e2e)', () => {
         password: 'Anypassword@123',
         active: true,
         role: UserRole.PATIENT,
+        acceptedTerms: true,
         patient: {
           name: 'any_name',
           cpf: 'any_cpf',
@@ -191,6 +194,7 @@ describe('UserController (e2e)', () => {
         password: 'Anypassword@123',
         active: true,
         role: UserRole.PATIENT,
+        acceptedTerms: true,
         patient: {
           name: 'any_name',
           cpf: 'other_cpf',
@@ -224,6 +228,7 @@ describe('UserController (e2e)', () => {
         password: 'Anypassword@123',
         active: true,
         role: UserRole.PATIENT,
+        acceptedTerms: true,
         patient: {
           name: 'any_name',
           cpf: existingUser.patient.cpf,
@@ -251,6 +256,7 @@ describe('UserController (e2e)', () => {
         password: 'Anypassword@123',
         active: true,
         role: UserRole.PROFESSIONAL,
+        acceptedTerms: true,
         professional: {
           name: 'any_name',
           type: ProfessionalType.MEDIC,
@@ -314,6 +320,7 @@ describe('UserController (e2e)', () => {
         password: 'Anypassword@123',
         active: true,
         role: UserRole.PROFESSIONAL,
+        acceptedTerms: true,
         professional: {
           name: 'any_name',
           type: ProfessionalType.MEDIC,

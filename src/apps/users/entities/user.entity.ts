@@ -21,6 +21,9 @@ export class User extends BaseEntity<User> {
   @Column({ name: 'perfil', type: 'enum', enum: UserRole })
   role: UserRole;
 
+  @Column({ name: 'termos_aceitos', default: true })
+  acceptedTerms: boolean;
+
   @OneToOne(() => Administrator, (administrator) => administrator.user, {
     cascade: true,
   })

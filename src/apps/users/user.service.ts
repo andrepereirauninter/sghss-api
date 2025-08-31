@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -34,6 +35,12 @@ export class UserService {
     if (userExists) {
       throw new ConflictException(
         `Um usuário com o email ${payload.email} já existe.`,
+      );
+    }
+
+    if (!payload.acceptedTerms) {
+      throw new BadRequestException(
+        'O usuário deve aceitar os termos de uso do sistema.',
       );
     }
 
