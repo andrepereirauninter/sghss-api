@@ -8,6 +8,7 @@ import { UserRole } from '../../../apps/users/enums/user-role.enum';
 import { CreateUserPayload } from '../../../apps/users/payload/create-user.payload';
 import { FilterAllUsersPayload } from '../../../apps/users/payload/filter-all-users.payload';
 import { UpdateAdministratorPayload } from '../../../apps/users/payload/update-administrator.payload';
+import { UpdatePasswordPayload } from '../../../apps/users/payload/update-password.payload';
 import { UpdatePatientPayload } from '../../../apps/users/payload/update-patient.payload';
 import { UpdateProfissionalPayload } from '../../../apps/users/payload/update-profissional.payload';
 import { UserRepository } from '../../../apps/users/repositories/user.repository';
@@ -1094,6 +1095,85 @@ describe('UserController (e2e)', () => {
         error: 'Not Found',
         message: `O paciente com ID ${id} não foi encontrado.`,
         statusCode: HttpStatus.NOT_FOUND,
+      });
+    });
+  });
+
+  describe('/users/:id/password (PATCH)', () => {
+    it('should update password', async () => {
+      const { user, plainPassword } = await createAdministratorMock({
+        app,
+        email: 'any_email@email.com',
+      });
+
+      const payload: UpdatePasswordPayload = {
+        oldPassword: plainPassword,
+        newPassword: 'any_new_password',
+      };
+
+      const response = await request(app.getHttpServer())
+        .patch(`/users/${user.id}/password`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
+        .send(payload);
+
+      expect(response.status).toBe(HttpStatus.NO_CONTENT);
+
+      const responseInDb = await repository.findOne({
+        where: {
+          id: user.id,
+        },
+        select: {
+          id: true,
+          password: true,
+        },
+      });
+
+      expect(responseInDb?.comparePassword(plainPassword)).toBe(false);
+      expect(responseInDb?.comparePassword(payload.newPassword)).toBe(true);
+    });
+
+    it('should not update password if the user is not found', async () => {
+      const id = randomUUID();
+
+      const payload: UpdatePasswordPayload = {
+        oldPassword: 'any_old_password',
+        newPassword: 'any_new_password',
+      };
+
+      const response = await request(app.getHttpServer())
+        .patch(`/users/${id}/password`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
+        .send(payload);
+
+      expect(response.status).toBe(HttpStatus.NOT_FOUND);
+      expect(response.body).toEqual({
+        error: 'Not Found',
+        statusCode: HttpStatus.NOT_FOUND,
+        message: `O usuário com ID ${id} não foi encontrado.`,
+      });
+    });
+
+    it('should not update password if the old password is invalid', async () => {
+      const { user } = await createAdministratorMock({
+        app,
+        email: 'any_email@email.com',
+      });
+
+      const payload: UpdatePasswordPayload = {
+        oldPassword: 'invalid_old_password',
+        newPassword: 'any_new_password',
+      };
+
+      const response = await request(app.getHttpServer())
+        .patch(`/users/${user.id}/password`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
+        .send(payload);
+
+      expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+      expect(response.body).toEqual({
+        error: 'Bad Request',
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: `A senha antiga está incorreta.`,
       });
     });
   });

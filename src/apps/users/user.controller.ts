@@ -6,6 +6,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Patch,
   Post,
   Put,
   Query,
@@ -30,6 +31,7 @@ import { UserRole } from './enums/user-role.enum';
 import { CreateUserPayload } from './payload/create-user.payload';
 import { FilterAllUsersPayload } from './payload/filter-all-users.payload';
 import { UpdateAdministratorPayload } from './payload/update-administrator.payload';
+import { UpdatePasswordPayload } from './payload/update-password.payload';
 import { UpdatePatientPayload } from './payload/update-patient.payload';
 import { UpdateProfissionalPayload } from './payload/update-profissional.payload';
 import { UserService } from './user.service';
@@ -230,6 +232,32 @@ export class UserController {
     @Body() payload: UpdateProfissionalPayload,
   ) {
     return this.service.updateProfessional(id, payload);
+  }
+
+  @Patch(':id/password')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({
+    summary: `Atualizar senha do usuário`,
+  })
+  @ApiNoContentResponse({
+    description: 'Senha atualizada com sucesso.',
+  })
+  @ApiBadRequestResponse({
+    description: apiResponses.badRequestWithValidation,
+  })
+  @ApiUnauthorizedResponse({
+    description: apiResponses.unauthorizedDefaultMessage,
+  })
+  @ApiForbiddenResponse({
+    description: apiResponses.forbiddenDefaultMessage,
+  })
+  @JwtAuth()
+  @Roles(UserRole.ADMIN)
+  updatePassword(
+    @Param('id', UUIDValidationPipe) id: string,
+    @Body() payload: UpdatePasswordPayload,
+  ) {
+    return this.service.updatePassword(id, payload);
   }
 
   @Delete(':id')

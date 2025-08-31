@@ -12,6 +12,7 @@ import { PatientService } from './patient.service';
 import { CreateUserPayload } from './payload/create-user.payload';
 import { FilterAllUsersPayload } from './payload/filter-all-users.payload';
 import { UpdateAdministratorPayload } from './payload/update-administrator.payload';
+import { UpdatePasswordPayload } from './payload/update-password.payload';
 import { UpdatePatientPayload } from './payload/update-patient.payload';
 import { UpdateProfissionalPayload } from './payload/update-profissional.payload';
 import { UserRepository } from './repositories/user.repository';
@@ -234,6 +235,30 @@ export class UserService {
     };
 
     await this.repository.save(userToUpdate);
+  }
+
+  async updatePassword(id: string, payload: UpdatePasswordPayload) {
+    const user = await this.repository.findOne({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+        password: true,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`O usuário com ID ${id} não foi encontrado.`);
+    }
+
+    if (!user.comparePassword(payload.oldPassword)) {
+      throw new BadRequestException('A senha antiga está incorreta.');
+    }
+
+    user.password = payload.newPassword;
+
+    await this.repository.save(user);
   }
 
   async remove(id: string) {
