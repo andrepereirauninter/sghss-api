@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { paginate } from '../../../common/helpers/paginate.helper';
 import { BaseRepository } from '../../../common/repositories/base-repository';
 import { User } from '../entities/user.entity';
+import { UserRole } from '../enums/user-role.enum';
 import { FilterAllUsersPayload } from '../payload/filter-all-users.payload';
 
 @Injectable()
@@ -110,6 +111,73 @@ export class UserRepository extends BaseRepository<User> {
         'professional.name',
         'professional.speciality',
         'professional.type',
+        'patient.id',
+        'patient.cpf',
+        'patient.name',
+        'patient.birthDate',
+        'patient.contact',
+      ])
+      .getOne();
+  }
+
+  findByIdWithRelations(id: string) {
+    return this.findOne({
+      where: { id },
+      relations: {
+        administrator: true,
+        professional: true,
+        patient: true,
+      },
+    });
+  }
+
+  findAdministratorById(id: string) {
+    return this.createQueryBuilder('user')
+      .leftJoin('user.administrator', 'administrator')
+      .where('user.id = :id', { id })
+      .andWhere('user.role = :role', { role: UserRole.ADMIN })
+      .select([
+        'user.id',
+        'user.createdAt',
+        'user.email',
+        'user.active',
+        'user.role',
+        'administrator.id',
+        'administrator.name',
+      ])
+      .getOne();
+  }
+
+  findProfessionalById(id: string) {
+    return this.createQueryBuilder('user')
+      .leftJoin('user.professional', 'professional')
+      .where('user.id = :id', { id })
+      .andWhere('user.role = :role', { role: UserRole.PROFESSIONAL })
+      .select([
+        'user.id',
+        'user.createdAt',
+        'user.email',
+        'user.active',
+        'user.role',
+        'professional.id',
+        'professional.name',
+        'professional.speciality',
+        'professional.type',
+      ])
+      .getOne();
+  }
+
+  findPatientById(id: string) {
+    return this.createQueryBuilder('user')
+      .leftJoin('user.patient', 'patient')
+      .where('user.id = :id', { id })
+      .andWhere('user.role = :role', { role: UserRole.PATIENT })
+      .select([
+        'user.id',
+        'user.createdAt',
+        'user.email',
+        'user.active',
+        'user.role',
         'patient.id',
         'patient.cpf',
         'patient.name',

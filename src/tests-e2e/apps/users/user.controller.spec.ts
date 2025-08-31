@@ -7,6 +7,9 @@ import { ProfessionalType } from '../../../apps/users/enums/professional-type.en
 import { UserRole } from '../../../apps/users/enums/user-role.enum';
 import { CreateUserPayload } from '../../../apps/users/payload/create-user.payload';
 import { FilterAllUsersPayload } from '../../../apps/users/payload/filter-all-users.payload';
+import { UpdateAdministratorPayload } from '../../../apps/users/payload/update-administrator.payload';
+import { UpdatePatientPayload } from '../../../apps/users/payload/update-patient.payload';
+import { UpdateProfissionalPayload } from '../../../apps/users/payload/update-profissional.payload';
 import { UserRepository } from '../../../apps/users/repositories/user.repository';
 import { loginMock } from '../../mocks/auth/login.mock';
 import { createAdministratorMock } from '../../mocks/users/create-administrator.mock';
@@ -747,6 +750,90 @@ describe('UserController (e2e)', () => {
       expect(response.body).toEqual({
         error: 'Not Found',
         message: `O usuário com ID ${id} não foi encontrado.`,
+        statusCode: HttpStatus.NOT_FOUND,
+      });
+    });
+  });
+
+  describe('/users/:id (PUT)', () => {
+    it('should update an administrator', async () => {});
+
+    it('should update a professional', async () => {});
+
+    it('should update a patient', async () => {});
+
+    it('should not update an administrator with a duplicate email', async () => {});
+
+    it('should not update a professional with a duplicate email', async () => {});
+
+    it('should not update a patient with a duplicate email', async () => {});
+
+    it('should not update a patient with a duplicate cpf', async () => {});
+
+    it('should not update a administrator if it does not exist', async () => {
+      const id = randomUUID();
+
+      const payload: UpdateAdministratorPayload = {
+        email: 'any_email@email.com',
+        name: 'any_name',
+      };
+
+      const response = await request(app.getHttpServer())
+        .put(`/users/administrator/${id}`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
+        .send(payload);
+
+      expect(response.status).toBe(HttpStatus.NOT_FOUND);
+      expect(response.body).toEqual({
+        error: 'Not Found',
+        message: `O administrador com ID ${id} não foi encontrado.`,
+        statusCode: HttpStatus.NOT_FOUND,
+      });
+    });
+
+    it('should not update a professional if it does not exist', async () => {
+      const id = randomUUID();
+
+      const payload: UpdateProfissionalPayload = {
+        email: 'any_email@email.com',
+        name: 'any_name',
+        type: ProfessionalType.MEDIC,
+        speciality: 'any_speciality',
+      };
+
+      const response = await request(app.getHttpServer())
+        .put(`/users/professional/${id}`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
+        .send(payload);
+
+      expect(response.status).toBe(HttpStatus.NOT_FOUND);
+      expect(response.body).toEqual({
+        error: 'Not Found',
+        message: `O profissional de saúde com ID ${id} não foi encontrado.`,
+        statusCode: HttpStatus.NOT_FOUND,
+      });
+    });
+
+    it('should not update a patient if it does not exist', async () => {
+      const id = randomUUID();
+
+      const payload: UpdatePatientPayload = {
+        email: 'any_email@email.com',
+        name: 'any_name',
+        cpf: 'any_cpf',
+        birthDate: '2025-01-01',
+        contact: 'any_contact',
+      };
+
+      const response = await request(app.getHttpServer())
+        .put(`/users/patient/${id}`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
+        .send(payload);
+
+      expect(response.status).toBe(HttpStatus.NOT_FOUND);
+      expect(response.body).toEqual({
+        error: 'Not Found',
+        message: `O paciente com ID ${id} não foi encontrado.`,
         statusCode: HttpStatus.NOT_FOUND,
       });
     });

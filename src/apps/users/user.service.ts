@@ -10,6 +10,9 @@ import { UserRole } from './enums/user-role.enum';
 import { PatientService } from './patient.service';
 import { CreateUserPayload } from './payload/create-user.payload';
 import { FilterAllUsersPayload } from './payload/filter-all-users.payload';
+import { UpdateAdministratorPayload } from './payload/update-administrator.payload';
+import { UpdatePatientPayload } from './payload/update-patient.payload';
+import { UpdateProfissionalPayload } from './payload/update-profissional.payload';
 import { UserRepository } from './repositories/user.repository';
 
 @Injectable()
@@ -51,14 +54,7 @@ export class UserService {
   }
 
   findByIdWithRelations(id: string) {
-    return this.repository.findOne({
-      where: { id },
-      relations: {
-        administrator: true,
-        professional: true,
-        patient: true,
-      },
-    });
+    return this.repository.findByIdWithRelations(id);
   }
 
   async validateUser(email: string, password: string) {
@@ -111,6 +107,126 @@ export class UserService {
 
     user.active = false;
     await this.repository.save(user);
+  }
+
+  async updateAdministrator(id: string, payload: UpdateAdministratorPayload) {
+    const currentAdmin = await this.repository.findAdministratorById(id);
+
+    if (!currentAdmin) {
+      throw new NotFoundException(
+        `O administrador com ID ${id} não foi encontrado.`,
+      );
+    }
+
+    if (payload.email !== currentAdmin.email) {
+      const userExists = await this.repository.findOneBy({
+        email: payload.email,
+      });
+
+      if (userExists) {
+        throw new ConflictException(
+          `Um usuário com o email ${payload.email} já existe.`,
+        );
+      }
+    }
+
+    const administratorToUpdate = {
+      ...currentAdmin.administrator,
+      name: payload.name,
+    };
+
+    const userToUpdate = {
+      ...currentAdmin,
+      ...payload,
+      administrator: administratorToUpdate,
+    };
+
+    await this.repository.save(userToUpdate);
+  }
+
+  async updatePatient(id: string, payload: UpdatePatientPayload) {
+    const currentPatient = await this.repository.findPatientById(id);
+
+    if (!currentPatient) {
+      throw new NotFoundException(
+        `O paciente com ID ${id} não foi encontrado.`,
+      );
+    }
+
+    if (payload.email !== currentPatient.email) {
+      const userExists = await this.repository.findOneBy({
+        email: payload.email,
+      });
+
+      if (userExists) {
+        throw new ConflictException(
+          `O paciente com o email ${payload.email} já existe.`,
+        );
+      }
+    }
+
+    if (payload.cpf !== currentPatient.patient.cpf) {
+      const patientExists = await this.patientService.findByCpf(payload.cpf);
+
+      if (patientExists) {
+        throw new ConflictException(
+          `O paciente com o cpf ${payload.cpf} já existe.`,
+        );
+      }
+    }
+
+    const patientToUpdate = {
+      ...currentPatient.patient,
+      name: payload.name,
+      cpf: payload.cpf,
+      birthDate: payload.birthDate,
+      contact: payload.contact,
+    };
+
+    const userToUpdate = {
+      ...currentPatient,
+      ...payload,
+      patient: patientToUpdate,
+    };
+
+    await this.repository.save(userToUpdate);
+  }
+
+  async updateProfessional(id: string, payload: UpdateProfissionalPayload) {
+    const currentProfessional = await this.repository.findProfessionalById(id);
+
+    if (!currentProfessional) {
+      throw new NotFoundException(
+        `O profissional de saúde com ID ${id} não foi encontrado.`,
+      );
+    }
+
+    if (payload.email !== currentProfessional.email) {
+      const userExists = await this.repository.findOneBy({
+        email: payload.email,
+      });
+
+      if (userExists) {
+        throw new ConflictException(
+          `Um usuário com o email ${payload.email} já existe.`,
+        );
+      }
+    }
+
+    const professionalToUpdate = {
+      ...currentProfessional.patient,
+      name: payload.name,
+      speciality: payload.speciality,
+      type: payload.type,
+    };
+
+    const userToUpdate = {
+      ...currentProfessional,
+      ...payload,
+      professional: professionalToUpdate,
+    };
+
+    await this.repository.save(userToUpdate);
   }
 
   async remove(id: string) {

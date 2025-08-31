@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Put,
   Query,
 } from '@nestjs/common';
 import {
@@ -28,6 +29,9 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from './enums/user-role.enum';
 import { CreateUserPayload } from './payload/create-user.payload';
 import { FilterAllUsersPayload } from './payload/filter-all-users.payload';
+import { UpdateAdministratorPayload } from './payload/update-administrator.payload';
+import { UpdatePatientPayload } from './payload/update-patient.payload';
+import { UpdateProfissionalPayload } from './payload/update-profissional.payload';
 import { UserService } from './user.service';
 
 @Controller('users')
@@ -150,13 +154,91 @@ export class UserController {
     return this.service.deactivate(id);
   }
 
+  @Put('administrator/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({
+    summary: 'Atualizar um administrador',
+  })
+  @ApiNoContentResponse({
+    description: 'Administrador atualizado com sucesso.',
+  })
+  @ApiBadRequestResponse({
+    description: apiResponses.badRequestWithValidation,
+  })
+  @ApiUnauthorizedResponse({
+    description: apiResponses.unauthorizedDefaultMessage,
+  })
+  @ApiForbiddenResponse({
+    description: apiResponses.forbiddenDefaultMessage,
+  })
+  @JwtAuth()
+  @Roles(UserRole.ADMIN)
+  updateAdministrator(
+    @Param('id', UUIDValidationPipe) id: string,
+    @Body() payload: UpdateAdministratorPayload,
+  ) {
+    return this.service.updateAdministrator(id, payload);
+  }
+
+  @Put('patient/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({
+    summary: 'Atualizar um paciente',
+  })
+  @ApiNoContentResponse({
+    description: 'Paciente atualizado com sucesso.',
+  })
+  @ApiBadRequestResponse({
+    description: apiResponses.badRequestWithValidation,
+  })
+  @ApiUnauthorizedResponse({
+    description: apiResponses.unauthorizedDefaultMessage,
+  })
+  @ApiForbiddenResponse({
+    description: apiResponses.forbiddenDefaultMessage,
+  })
+  @JwtAuth()
+  @Roles(UserRole.ADMIN)
+  updatePatient(
+    @Param('id', UUIDValidationPipe) id: string,
+    @Body() payload: UpdatePatientPayload,
+  ) {
+    return this.service.updatePatient(id, payload);
+  }
+
+  @Put('professional/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({
+    summary: 'Atualizar um profissional de saúde',
+  })
+  @ApiNoContentResponse({
+    description: 'Profissional de saúde atualizado com sucesso.',
+  })
+  @ApiBadRequestResponse({
+    description: apiResponses.badRequestWithValidation,
+  })
+  @ApiUnauthorizedResponse({
+    description: apiResponses.unauthorizedDefaultMessage,
+  })
+  @ApiForbiddenResponse({
+    description: apiResponses.forbiddenDefaultMessage,
+  })
+  @JwtAuth()
+  @Roles(UserRole.ADMIN)
+  updateProfissional(
+    @Param('id', UUIDValidationPipe) id: string,
+    @Body() payload: UpdateProfissionalPayload,
+  ) {
+    return this.service.updateProfessional(id, payload);
+  }
+
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({
     summary: 'Remover um usuário',
   })
   @ApiNoContentResponse({
-    description: 'Usuário desativado com sucesso.',
+    description: 'Usuário removido com sucesso.',
   })
   @ApiBadRequestResponse({
     description: apiResponses.badRequestWithValidation,
