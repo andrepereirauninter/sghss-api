@@ -10,14 +10,6 @@ export function generateSwaggerDocumentation(app: INestApplication) {
     .setTitle('Sghss API')
     .setVersion('0.0.1')
     .addGlobalResponse({
-      status: HttpStatus.UNAUTHORIZED,
-      description: apiResponses.unauthorizedDefaultMessage,
-    })
-    .addGlobalResponse({
-      status: HttpStatus.FORBIDDEN,
-      description: apiResponses.forbiddenDefaultMessage,
-    })
-    .addGlobalResponse({
       status: HttpStatus.INTERNAL_SERVER_ERROR,
       description: apiResponses.internalServerErrorDefaultMessage,
     })

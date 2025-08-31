@@ -6,6 +6,7 @@ import { ProfessionalType } from '../../../apps/users/enums/professional-type.en
 import { UserRole } from '../../../apps/users/enums/user-role.enum';
 import { CreateUserPayload } from '../../../apps/users/payload/create-user.payload';
 import { UserRepository } from '../../../apps/users/repositories/user.repository';
+import { loginMock } from '../../mocks/auth/login.mock';
 import { createAdministratorMock } from '../../mocks/users/create-administrator.mock';
 import { createPatientMock } from '../../mocks/users/create-patient.mock';
 import { createProfessionalMock } from '../../mocks/users/create-professional.mock';
@@ -17,9 +18,11 @@ import {
 describe('UserController (e2e)', () => {
   let app: INestApplication;
   let repository: UserRepository;
+  let loginResponse: request.Response;
 
   beforeEach(async () => {
     ({ app } = await generateDefaultAppBeforeEachSetup());
+    ({ response: loginResponse } = await loginMock(app));
 
     repository = app.get(UserRepository);
   });
@@ -42,6 +45,7 @@ describe('UserController (e2e)', () => {
 
       const response = await request(app.getHttpServer())
         .post(`/users`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
         .send(payload);
 
       expect(response.status).toBe(HttpStatus.CREATED);
@@ -98,6 +102,7 @@ describe('UserController (e2e)', () => {
 
       const response = await request(app.getHttpServer())
         .post(`/users`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
         .send(payload);
 
       expect(response.status).toBe(HttpStatus.CONFLICT);
@@ -124,6 +129,7 @@ describe('UserController (e2e)', () => {
 
       const response = await request(app.getHttpServer())
         .post(`/users`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
         .send(payload);
 
       expect(response.status).toBe(HttpStatus.CREATED);
@@ -190,6 +196,7 @@ describe('UserController (e2e)', () => {
 
       const response = await request(app.getHttpServer())
         .post(`/users`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
         .send(payload);
 
       expect(response.status).toBe(HttpStatus.CONFLICT);
@@ -222,6 +229,7 @@ describe('UserController (e2e)', () => {
 
       const response = await request(app.getHttpServer())
         .post(`/users`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
         .send(payload);
 
       expect(response.status).toBe(HttpStatus.CONFLICT);
@@ -247,6 +255,7 @@ describe('UserController (e2e)', () => {
 
       const response = await request(app.getHttpServer())
         .post(`/users`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
         .send(payload);
 
       expect(response.status).toBe(HttpStatus.CREATED);
@@ -309,6 +318,7 @@ describe('UserController (e2e)', () => {
 
       const response = await request(app.getHttpServer())
         .post(`/users`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
         .send(payload);
 
       expect(response.status).toBe(HttpStatus.CONFLICT);

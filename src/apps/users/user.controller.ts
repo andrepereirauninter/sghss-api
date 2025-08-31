@@ -2,11 +2,16 @@ import { Body, Controller, Post } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
+  ApiForbiddenResponse,
   ApiOperation,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
 import { apiResponses } from '../../common/constants/swagger';
+import { JwtAuth } from '../auth/decorators/jwt-auth.decorator';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRole } from './enums/user-role.enum';
 import { CreateUserPayload } from './payload/create-user.payload';
 import { UserService } from './user.service';
 
@@ -25,6 +30,14 @@ export class UserController {
   @ApiBadRequestResponse({
     description: apiResponses.badRequestWithValidation,
   })
+  @ApiUnauthorizedResponse({
+    description: apiResponses.unauthorizedDefaultMessage,
+  })
+  @ApiForbiddenResponse({
+    description: apiResponses.forbiddenDefaultMessage,
+  })
+  @JwtAuth()
+  @Roles(UserRole.ADMIN)
   create(@Body() payload: CreateUserPayload) {
     return this.service.create(payload);
   }
