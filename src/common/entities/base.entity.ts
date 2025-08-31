@@ -12,12 +12,14 @@ export abstract class BaseEntity<Entity> extends TypeBaseEntity {
   @CreateDateColumn({
     type: 'timestamp with time zone',
     nullable: false,
+    name: 'criado_em',
   })
   createdAt: Date;
 
   @UpdateDateColumn({
     type: 'timestamp with time zone',
     select: false,
+    name: 'atualizado_em',
   })
   updatedAt: Date;
 

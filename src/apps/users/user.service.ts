@@ -8,6 +8,7 @@ import { User } from './entities/user.entity';
 import { UserRole } from './enums/user-role.enum';
 import { PatientService } from './patient.service';
 import { CreateUserPayload } from './payload/create-user.payload';
+import { FilterAllUsersPayload } from './payload/filter-all-users.payload';
 import { UserRepository } from './repositories/user.repository';
 
 @Injectable()
@@ -73,5 +74,9 @@ export class UserService {
     if (!user.comparePassword(password)) {
       throw new UnauthorizedException('Credenciais inválidas.');
     }
+  }
+
+  findAll(payload: FilterAllUsersPayload) {
+    return this.repository.findAll(payload);
   }
 }

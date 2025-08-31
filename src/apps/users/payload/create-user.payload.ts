@@ -11,6 +11,7 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
+import { EmptyToUndefined } from '../../../common/decorators/empty-to-undefined.decorator';
 import { UserRole } from '../enums/user-role.enum';
 import { CreateAdministratorPayload } from './create-administrator.payload';
 import { CreatePatientPayload } from './create-patient.payload';
@@ -20,11 +21,13 @@ export class CreateUserPayload {
   @ApiProperty()
   @IsEmail()
   @IsNotEmpty()
+  @EmptyToUndefined()
   email: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
+  @EmptyToUndefined()
   password: string;
 
   @ApiProperty()
