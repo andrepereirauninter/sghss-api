@@ -1,4 +1,4 @@
-import { Column, Entity, JoinTable, ManyToMany } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
 import { BaseEntity } from '../../../common/entities/base.entity';
 import { Unit } from '../../units/entities/unit.entity';
@@ -12,7 +12,12 @@ export class Appointment extends BaseEntity<Appointment> {
   @Column({ name: 'data_hora', type: 'timestamp with time zone' })
   date: Date;
 
-  @Column({ name: 'status', type: 'enum', enum: AppointmentStatus })
+  @Column({
+    name: 'status',
+    type: 'enum',
+    enum: AppointmentStatus,
+    default: AppointmentStatus.SCHEDULED,
+  })
   status: AppointmentStatus;
 
   @Column({ name: 'tipo', type: 'enum', enum: AppointmentType })
@@ -21,45 +26,15 @@ export class Appointment extends BaseEntity<Appointment> {
   @Column({ name: 'observacoes', type: 'text' })
   notes: string;
 
-  @ManyToMany(() => Professional)
-  @JoinTable({
-    name: 'consultas_medicos',
-    joinColumn: {
-      name: 'consulta_id',
-      referencedColumnName: 'id',
-    },
-    inverseJoinColumn: {
-      name: 'medico_id',
-      referencedColumnName: 'id',
-    },
-  })
+  @ManyToOne(() => Professional)
+  @JoinColumn({ name: 'medico_id' })
   medic?: Professional;
 
-  @ManyToMany(() => Patient)
-  @JoinTable({
-    name: 'consultas_pacientes',
-    joinColumn: {
-      name: 'consulta_id',
-      referencedColumnName: 'id',
-    },
-    inverseJoinColumn: {
-      name: 'paciente_id',
-      referencedColumnName: 'id',
-    },
-  })
+  @ManyToOne(() => Patient)
+  @JoinColumn({ name: 'paciente_id' })
   patient?: Patient;
 
-  @ManyToMany(() => Unit)
-  @JoinTable({
-    name: 'consultas_unidades',
-    joinColumn: {
-      name: 'consulta_id',
-      referencedColumnName: 'id',
-    },
-    inverseJoinColumn: {
-      name: 'unidade_id',
-      referencedColumnName: 'id',
-    },
-  })
+  @ManyToOne(() => Unit)
+  @JoinColumn({ name: 'unidade_id' })
   unit?: Unit;
 }

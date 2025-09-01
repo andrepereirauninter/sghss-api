@@ -140,4 +140,12 @@ export class UnitService {
 
     await this.repository.delete(id);
   }
+
+  findById(id: string) {
+    return this.repository.findOne({
+      where: {
+        id,
+      },
+    });
+  }
 }

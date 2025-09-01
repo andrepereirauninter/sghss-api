@@ -97,15 +97,29 @@ export class UserRepository extends BaseRepository<User> {
   search(
     payload: FilterSearchUsersPayload,
   ): Promise<{ id: string; name: string }[]> {
-    const { name = '' } = payload;
+    const { name = '', role, professionalType } = payload;
 
-    return this.createQueryBuilder('user')
+    const query = this.createQueryBuilder('user')
       .leftJoin('user.administrator', 'administrator')
       .leftJoin('user.professional', 'professional')
       .leftJoin('user.patient', 'patient')
-      .where('administrator.name ILIKE :name', { name: `%${name}%` })
-      .orWhere('professional.name ILIKE :name', { name: `%${name}%` })
-      .orWhere('patient.name ILIKE :name', { name: `%${name}%` })
+      .where((qb) => {
+        qb.where('administrator.name ILIKE :name', { name: `%${name}%` })
+          .orWhere('professional.name ILIKE :name', { name: `%${name}%` })
+          .orWhere('patient.name ILIKE :name', { name: `%${name}%` });
+      });
+
+    if (role?.length) {
+      query.andWhere('user.role IN (:...role)', { role });
+    }
+
+    if (professionalType?.length) {
+      query.andWhere('professional.type IN (:...professionalType)', {
+        professionalType,
+      });
+    }
+
+    return query
       .select('user.id', 'id')
       .addSelect(
         'COALESCE(administrator.name, professional.name, patient.name)',

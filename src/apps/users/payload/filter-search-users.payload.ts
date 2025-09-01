@@ -4,6 +4,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 
 import { EmptyToUndefined } from '../../../common/decorators/empty-to-undefined.decorator';
 import { QueryStringToArray } from '../../../common/decorators/query-string-to-array.decorator';
+import { ProfessionalType } from '../enums/professional-type.enum';
 import { UserRole } from '../enums/user-role.enum';
 
 export class FilterSearchUsersPayload {
@@ -19,4 +20,11 @@ export class FilterSearchUsersPayload {
   @EmptyToUndefined()
   @QueryStringToArray()
   role?: UserRole[];
+
+  @ApiPropertyOptional()
+  @IsEnum(ProfessionalType, { each: true })
+  @IsOptional()
+  @EmptyToUndefined()
+  @QueryStringToArray()
+  professionalType?: ProfessionalType[];
 }

@@ -13,4 +13,12 @@ export class PatientService {
       },
     });
   }
+
+  async findById(id: string) {
+    return this.repository.findOne({
+      where: {
+        id,
+      },
+    });
+  }
 }

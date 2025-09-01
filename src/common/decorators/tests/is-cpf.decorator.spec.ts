@@ -23,7 +23,7 @@ describe('IsCpf decorator', () => {
     const errors = await validate(model);
     expect(errors).toHaveLength(1);
     expect(errors[0].constraints).toMatchObject({
-      isCpf: 'CPF inválido',
+      IsCpfConstraint: 'CPF inválido',
     });
   });
 
@@ -32,7 +32,7 @@ describe('IsCpf decorator', () => {
     const errors = await validate(model);
     expect(errors).toHaveLength(1);
     expect(errors[0].constraints).toMatchObject({
-      isCpf: 'CPF inválido',
+      IsCpfConstraint: 'CPF inválido',
     });
   });
 
@@ -41,7 +41,7 @@ describe('IsCpf decorator', () => {
     const errors = await validate(model);
     expect(errors).toHaveLength(1);
     expect(errors[0].constraints).toMatchObject({
-      isCpf: 'CPF inválido',
+      IsCpfConstraint: 'CPF inválido',
     });
   });
 
@@ -50,7 +50,7 @@ describe('IsCpf decorator', () => {
     const errors = await validate(model);
     expect(errors).toHaveLength(1);
     expect(errors[0].constraints).toMatchObject({
-      isCpf: 'CPF inválido',
+      IsCpfConstraint: 'CPF inválido',
     });
   });
 });

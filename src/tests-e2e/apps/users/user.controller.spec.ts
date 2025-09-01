@@ -322,6 +322,48 @@ describe('UserController (e2e)', () => {
         },
       ]);
     });
+
+    it('should search professionals by type', async () => {
+      await createAdministratorMock({
+        app,
+        email: 'admin@email.com',
+        name: 'admin',
+      });
+
+      const { user: professional } = await createProfessionalMock({
+        app,
+        email: 'professional@email.com',
+        name: 'professional',
+      });
+
+      await createPatientMock({
+        app,
+        email: 'patient@email.com',
+        name: 'patient',
+        cpf: '38843878042',
+      });
+
+      const payload: FilterSearchUsersPayload = {
+        name: professional.professional.name,
+        role: [professional.role],
+        professionalType: [professional.professional.type],
+      };
+
+      const response = await request(app.getHttpServer())
+        .get(`/users/search`)
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
+        .query(payload)
+        .send();
+
+      expect(response.status).toBe(HttpStatus.OK);
+
+      expect(response.body).toMatchObject([
+        {
+          id: professional.id,
+          name: professional.professional.name,
+        },
+      ]);
+    });
   });
 
   describe('/users (POST)', () => {

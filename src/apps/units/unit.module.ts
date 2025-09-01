@@ -12,5 +12,6 @@ import { UnitService } from './unit.service';
   imports: [TypeOrmModule.forFeature([Unit, Bed]), UserModule],
   controllers: [UnitController],
   providers: [UnitService, UnitRepository],
+  exports: [UnitService],
 })
 export class UnitModule {}
