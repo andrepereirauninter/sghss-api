@@ -22,7 +22,18 @@ describe('UnitController (e2e)', () => {
 
   beforeEach(async () => {
     ({ app } = await generateDefaultAppBeforeEachSetup());
-    ({ response: loginResponse } = await loginMock(app));
+
+    const { user: professionalToLogin, plainPassword } =
+      await createProfessionalMock({
+        app,
+        email: 'professional@email.com',
+        name: 'professional',
+      });
+
+    ({ response: loginResponse } = await loginMock(app, {
+      email: professionalToLogin.email,
+      password: plainPassword,
+    }));
 
     repository = app.get(UnitRepository);
   });

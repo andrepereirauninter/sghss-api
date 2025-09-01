@@ -149,6 +149,9 @@ export class UserController {
   @ApiForbiddenResponse({
     description: apiResponses.forbiddenDefaultMessage,
   })
+  @ApiNotFoundResponse({
+    description: 'Usuário não encontrado.',
+  })
   @JwtAuth()
   @Roles(UserRole.ADMIN)
   activate(@Param('id', UUIDValidationPipe) id: string) {
@@ -172,6 +175,9 @@ export class UserController {
   @ApiForbiddenResponse({
     description: apiResponses.forbiddenDefaultMessage,
   })
+  @ApiNotFoundResponse({
+    description: 'Usuário não encontrado.',
+  })
   @JwtAuth()
   @Roles(UserRole.ADMIN)
   deactivate(@Param('id', UUIDValidationPipe) id: string) {
@@ -194,6 +200,9 @@ export class UserController {
   })
   @ApiForbiddenResponse({
     description: apiResponses.forbiddenDefaultMessage,
+  })
+  @ApiNotFoundResponse({
+    description: 'Usuário não encontrado.',
   })
   @JwtAuth()
   @Roles(UserRole.ADMIN)
@@ -221,6 +230,9 @@ export class UserController {
   @ApiForbiddenResponse({
     description: apiResponses.forbiddenDefaultMessage,
   })
+  @ApiNotFoundResponse({
+    description: 'Usuário não encontrado.',
+  })
   @JwtAuth()
   @Roles(UserRole.ADMIN)
   updatePatient(
@@ -246,6 +258,9 @@ export class UserController {
   })
   @ApiForbiddenResponse({
     description: apiResponses.forbiddenDefaultMessage,
+  })
+  @ApiNotFoundResponse({
+    description: 'Usuário não encontrado.',
   })
   @JwtAuth()
   @Roles(UserRole.ADMIN)
@@ -273,6 +288,9 @@ export class UserController {
   @ApiForbiddenResponse({
     description: apiResponses.forbiddenDefaultMessage,
   })
+  @ApiNotFoundResponse({
+    description: 'Usuário não encontrado.',
+  })
   @JwtAuth()
   @Roles(UserRole.ADMIN)
   updatePassword(
@@ -298,6 +316,9 @@ export class UserController {
   })
   @ApiForbiddenResponse({
     description: apiResponses.forbiddenDefaultMessage,
+  })
+  @ApiNotFoundResponse({
+    description: 'Usuário não encontrado.',
   })
   @JwtAuth()
   @Roles(UserRole.ADMIN)
