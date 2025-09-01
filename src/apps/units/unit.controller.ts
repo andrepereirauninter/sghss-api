@@ -1,8 +1,20 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
   ApiForbiddenResponse,
+  ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -11,12 +23,14 @@ import {
 } from '@nestjs/swagger';
 
 import { apiResponses } from '../../common/constants/swagger';
+import { UUIDValidationPipe } from '../../common/pipes/uuid-validation.pipe';
 import { JwtAuth } from '../auth/decorators/jwt-auth.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '../users/enums/user-role.enum';
 import { CreateUnitPayload } from './payload/create-unit.payload';
 import { FilterAllUnitsPayload } from './payload/filter-all-units.payload';
 import { FilterSearchUnitsPayload } from './payload/filter-search-units.payload';
+import { UpdateUnitPayload } from './payload/update-unit.payload';
 import { UnitService } from './unit.service';
 
 @Controller('units')
@@ -112,5 +126,112 @@ export class UnitController {
   @Roles(UserRole.PROFESSIONAL)
   findDetails(@Param('id') id: string) {
     return this.service.findDetails(id);
+  }
+
+  @Post(':id/activate')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({
+    summary: 'Ativar uma unidade.',
+  })
+  @ApiNoContentResponse({
+    description: 'Unidade ativada com sucesso.',
+  })
+  @ApiBadRequestResponse({
+    description: apiResponses.badRequestWithValidation,
+  })
+  @ApiUnauthorizedResponse({
+    description: apiResponses.unauthorizedDefaultMessage,
+  })
+  @ApiForbiddenResponse({
+    description: apiResponses.forbiddenDefaultMessage,
+  })
+  @ApiNotFoundResponse({
+    description: 'Unidade não encontrada.',
+  })
+  @JwtAuth()
+  @Roles(UserRole.PROFESSIONAL)
+  activate(@Param('id', UUIDValidationPipe) id: string) {
+    return this.service.activate(id);
+  }
+
+  @Post(':id/deactivate')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({
+    summary: 'Desativar uma unidade.',
+  })
+  @ApiNoContentResponse({
+    description: 'Unidade desativada com sucesso.',
+  })
+  @ApiBadRequestResponse({
+    description: apiResponses.badRequestWithValidation,
+  })
+  @ApiUnauthorizedResponse({
+    description: apiResponses.unauthorizedDefaultMessage,
+  })
+  @ApiForbiddenResponse({
+    description: apiResponses.forbiddenDefaultMessage,
+  })
+  @ApiNotFoundResponse({
+    description: 'Unidade não encontrada.',
+  })
+  @JwtAuth()
+  @Roles(UserRole.PROFESSIONAL)
+  deactivate(@Param('id', UUIDValidationPipe) id: string) {
+    return this.service.deactivate(id);
+  }
+
+  @Put(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({
+    summary: 'Atualizar uma unidade.',
+  })
+  @ApiNoContentResponse({
+    description: 'Unidade atualizada com sucesso.',
+  })
+  @ApiBadRequestResponse({
+    description: apiResponses.badRequestWithValidation,
+  })
+  @ApiUnauthorizedResponse({
+    description: apiResponses.unauthorizedDefaultMessage,
+  })
+  @ApiForbiddenResponse({
+    description: apiResponses.forbiddenDefaultMessage,
+  })
+  @ApiNotFoundResponse({
+    description: 'Unidade não encontrada.',
+  })
+  @JwtAuth()
+  @Roles(UserRole.PROFESSIONAL)
+  update(
+    @Param('id', UUIDValidationPipe) id: string,
+    @Body() payload: UpdateUnitPayload,
+  ) {
+    return this.service.update(id, payload);
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({
+    summary: 'Remover uma unidade',
+  })
+  @ApiNoContentResponse({
+    description: 'Unidade removida com sucesso.',
+  })
+  @ApiBadRequestResponse({
+    description: apiResponses.badRequestWithValidation,
+  })
+  @ApiUnauthorizedResponse({
+    description: apiResponses.unauthorizedDefaultMessage,
+  })
+  @ApiForbiddenResponse({
+    description: apiResponses.forbiddenDefaultMessage,
+  })
+  @ApiNotFoundResponse({
+    description: 'Unidade não encontrada.',
+  })
+  @JwtAuth()
+  @Roles(UserRole.PROFESSIONAL)
+  remove(@Param('id', UUIDValidationPipe) id: string) {
+    return this.service.remove(id);
   }
 }
