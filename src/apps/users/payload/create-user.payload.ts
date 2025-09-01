@@ -12,6 +12,7 @@ import {
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 import { EmptyToUndefined } from '../../../common/decorators/empty-to-undefined.decorator';
+import { IsValidPassword } from '../../../common/decorators/is-valid-password.decorator';
 import { UserRole } from '../enums/user-role.enum';
 import { CreateAdministratorPayload } from './create-administrator.payload';
 import { CreatePatientPayload } from './create-patient.payload';
@@ -26,6 +27,7 @@ export class CreateUserPayload {
 
   @ApiProperty()
   @IsString()
+  @IsValidPassword()
   @IsNotEmpty()
   @EmptyToUndefined()
   password: string;
