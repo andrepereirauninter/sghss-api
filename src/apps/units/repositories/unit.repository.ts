@@ -29,7 +29,7 @@ export class UnitRepository extends BaseRepository<Unit> {
     } = payload;
 
     const query = this.createQueryBuilder('unit')
-      .leftJoin('unit.professional', 'professional')
+      .leftJoin('unit.professionals', 'professional')
       .where('unit.code ILIKE :code', { code: `%${code}%` })
       .andWhere('unit.name ILIKE :name', { name: `%${name}%` })
       .andWhere('unit.address ILIKE :address', { address: `%${address}%` })
@@ -48,6 +48,7 @@ export class UnitRepository extends BaseRepository<Unit> {
     query
       .select([
         'unit.id',
+        'unit.createdAt',
         'unit.code',
         'unit.name',
         'unit.address',
@@ -63,7 +64,7 @@ export class UnitRepository extends BaseRepository<Unit> {
 
   findDetails(id: string) {
     return this.createQueryBuilder('unit')
-      .leftJoin('unit.professional', 'professional')
+      .leftJoin('unit.professionals', 'professional')
       .where('unit.id = :id', { id })
       .select([
         'unit.id',
@@ -84,7 +85,7 @@ export class UnitRepository extends BaseRepository<Unit> {
     return this.createQueryBuilder('unit')
       .where('unit.name ILIKE :name', { name: `%${name}%` })
       .orWhere('unit.code ILIKE :code', { code: `%${code}%` })
-      .select(['unit.id', 'unit.code', 'unit.name'])
+      .select(['unit.id', 'unit.createdAt', 'unit.code', 'unit.name'])
       .orderBy('unit.createdAt', 'DESC')
       .getMany();
   }

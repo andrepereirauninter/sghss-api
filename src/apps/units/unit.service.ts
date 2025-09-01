@@ -51,6 +51,11 @@ export class UnitService {
         `Alguns profissionais de saúde não foram encontrados com os IDs: ${missingProfessionals.join(', ')}.`,
       );
     }
+
+    await this.repository.save({
+      ...payload,
+      professionals,
+    });
   }
 
   async findDetails(id: string) {
